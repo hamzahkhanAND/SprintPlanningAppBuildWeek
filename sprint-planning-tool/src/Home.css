@@ -1,0 +1,13 @@
+.home-container{
+    background: yellow;   
+    height: 100%;
+
+}
+
+.container{
+    background: purple;
+    width: 100%;
+}
+.sign-up-btns{
+    background:red;
+  }
