@@ -1,6 +1,4 @@
 .App {
-  background:green;
-  display: flex;
-  height: 100%;
+    max-Height:100vh;
 };
 
