@@ -1,13 +1,17 @@
-.home-container{
-    background: yellow;   
-    height: 100%;
-
-}
-
-.container{
+ 
+.content-container{
+    height:100vh;
+    display:flex;
+    /* justify-content: center; */
     background: purple;
-    width: 100%;
-}
-.sign-up-btns{
+  
+ }
+ .start-btn{
     background:red;
-  }
+   }
+  .slogan{
+    background:green;
+    width:397px;
+    height: 100px;
+   }
+ 
