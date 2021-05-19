@@ -1,4 +1,6 @@
 import React from 'react'
+import firebase from "firebase/app";
+import "firebase/firestore";
 
 function Setup() {
     return (
@@ -13,7 +15,19 @@ function Setup() {
                         <option value="fibonacci">Fibonacci</option>
                     </select>
                 </label>
-                <input type="submit" value="Create Race" />
+                <input type="submit" value="Create Race"
+                    onClick = {firebase.firestore().collection("users").add({
+                        name: "Alan",
+                    })
+                    .then((docRef) => {
+                        console.log("Document written with ID: ", docRef.id);
+                    })
+                    .catch((error) => {
+                        console.error("Error adding document: ", error);
+                    })
+                    
+                }
+                />
             </form>
         </div>
     )
