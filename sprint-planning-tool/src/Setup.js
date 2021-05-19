@@ -3,6 +3,7 @@ import React from 'react'
 function Setup() {
     return (
         <div>
+            <h1>Set up your race</h1>
             <form>
                 <label>Name Your Race
                     <input type="text" name="raceName" />
