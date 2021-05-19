@@ -18,11 +18,19 @@ firebase.initializeApp(firebaseConfig);
 
 function App() {
   return (
+    <Router>
     <div className="App">
-    <Home/>
-    
+      <Switch>
+
+ <Route path='/' exact component={Home}/>
+
+<Route path='/setup' component={Setup}/>
+
+    </Switch>
+ 
     </div>
-  );
+    </Router>
+  ); 
 }
 
 export default App;
