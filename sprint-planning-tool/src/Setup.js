@@ -1,4 +1,5 @@
 import React from 'react'
+import {Link} from 'react-router-dom'
 
 function Setup() {
     return (
@@ -13,7 +14,9 @@ function Setup() {
                         <option value="fibonacci">Fibonacci</option>
                     </select>
                 </label>
-                <input type="submit" value="Create Race" />
+                <Link to='/displayName'>
+                    <input type="submit" value="Create Race" />
+                </Link>
             </form>
         </div>
     )
