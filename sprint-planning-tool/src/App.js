@@ -1,4 +1,6 @@
 import './App.css';
+import { Switch, BrowserRouter as Router, Route } from "react-router-dom";
+import Setup from './Setup'
 import Home from './Home'
 import firebase from "firebase/app";
 import "firebase/firestore";
