@@ -1,7 +1,8 @@
 import './App.css';
 import { Switch, BrowserRouter as Router, Route } from "react-router-dom";
-import Setup from './Setup'
 import Home from './Home'
+import Setup from './Setup'
+import DisplayName from './DisplayName'
 import firebase from "firebase/app";
 import "firebase/firestore";
 
@@ -21,18 +22,15 @@ firebase.initializeApp(firebaseConfig);
 function App() {
   return (
     <Router>
-    <div className="App">
-      <Switch>
-
- <Route path='/' exact component={Home}/>
-
-<Route path='/setup' component={Setup}/>
-
-    </Switch>
- 
-    </div>
+      <div className="App">
+        <Switch>
+          <Route path='/' exact component={Home}/>
+          <Route path='/setup' component={Setup}/>
+          <Route path='/displayName' component={DisplayName}/>
+        </Switch>
+      </div>
     </Router>
-  ); 
+  )
 }
 
 export default App;
