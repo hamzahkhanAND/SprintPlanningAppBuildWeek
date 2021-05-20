@@ -41,34 +41,40 @@ function Setup(props) {
     }
     var randomGameID = getRandomID(10000, 99999);
     return (
-        <div>
-            <h1>Set up your race</h1>
-            <form onSubmit = {handleSubmit}>
-                <label>Name Your Race
-                    <input type="text" 
-                    name="raceName"
-                    value ={gameName}
-                    onChange={(e) => setName(e.target.value)} />
-                </label>
-                <label>Voting System
-                    <select>
-                        <option value="fibonacci">Fibonacci</option>
-                    </select>
-                </label>
-                
-                    {/* <Link  to={{
-                         pathname: "/displayName",
-                         state: {
-                            value : randomGameID   // pass the extracted url params here
-                             }
-                        }}>
-                            <input type="submit" value="Create Race"/>
-                    </Link> */}
+        <div className="container mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 text-left items-center h-screen p-6">
+                <div className="md:mb-96">
+                    <p className="text-7xl lg:text-8xl font-normal">Set up</p>
+                    <p className="text-7xl lg:text-8xl font-normal">your</p>
+                    <p className="text-7xl lg:text-8xl font-normal">race</p>
+                </div>
 
-                <input type="submit" value="Create Race"/>
-                
-                
-            </form>
+                <div className="md:mb-80">
+                    <form onSubmit = {handleSubmit}>
+                        <div className="my-9">
+                            <label className="text-lg font-medium">Name Your Race
+                                <input
+                                className="rounded border px-3 py-2 ml-2 w-2/4 lg:w-3/4"
+                                type="text" 
+                                name="raceName"
+                                placeholder="Race name"
+                                value ={gameName}
+                                onChange={(e) => setName(e.target.value)} />
+                            </label>
+                        </div>
+
+                        <div className="my-9">
+                            <label className="text-lg font-medium">Voting System
+                                <select className="rounded border px-3 py-2 ml-6 w-2/4 lg:w-3/4">
+                                    <option value="fibonacci">Fibonacci</option>
+                                </select>
+                            </label>
+                        </div>
+
+                        <input type="submit" value="Create Race" className="cursor-pointer rounded-full bg-yellow-500 text-white text-2xl font-semibold py-3 w-full" />
+                    </form>
+                </div>
+            </div>
         </div>
     )
 }
