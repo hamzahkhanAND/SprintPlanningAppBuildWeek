@@ -3,6 +3,7 @@ import { Switch, BrowserRouter as Router, Route } from "react-router-dom";
 import Home from './Home'
 import Setup from './Setup'
 import DisplayName from './DisplayName'
+import JoinGame from './JoinGame';
 import firebase from "firebase/app";
 import "firebase/firestore";
 
@@ -27,6 +28,7 @@ function App() {
           <Route path='/' exact component={Home}/>
           <Route path='/setup' component={Setup}/>
           <Route path='/displayName' component={DisplayName}/>
+          <Route path='/joinGame' component={JoinGame}/>
         </Switch>
       </div>
     </Router>
