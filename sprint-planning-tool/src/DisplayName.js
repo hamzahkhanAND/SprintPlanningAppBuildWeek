@@ -2,7 +2,7 @@ import React from 'react'
 
 function DisplayName() {
     return (
-        <div className="container md:mx-auto">
+        <div className="container mx-auto">
         <div className="flex items-center justify-center text-center h-screen">
             <form>
                 <div className="my-9">
