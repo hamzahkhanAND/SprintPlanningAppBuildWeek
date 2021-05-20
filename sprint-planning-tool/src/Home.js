@@ -1,14 +1,21 @@
 import React from 'react'
 import {Link} from 'react-router-dom'
 import './Home.css';
-
 function Home() {
    return (
     <div className="Home">
         
    <div className = "Header">
      <div className = "logo">
-     <img src="https://lh3.googleusercontent.com/proxy/Pszg-4b0KJ8njZgI-j1UK5p2hiXx0Y_gYDK1zO8_zabMRZ81fPSqfSYDI4yy-XbPLc4fTFfR2avHUllzsng7tZDQelwG9XxqYn4Eai8jdCV1Pk4bxUPRAmNdsfOC_yCoB_9AabTHI5WBkLHAcDELuw" alt="Sprint to the end" /></div>
+     <img src="https://lh3.googleusercontent.com/proxy/Pszg-4b0KJ8njZgI-j1UK5p2hiXx0Y_gYDK1zO8_zabMRZ81fPSqfSYDI4yy-XbPLc4fTFfR2avHUllzsng7tZDQelwG9XxqYn4Eai8jdCV1Pk4bxUPRAmNdsfOC_yCoB_9AabTHI5WBkLHAcDELuw" />
+     </div>
+     <div className="join-btn">
+           <button>
+               <Link to='/setup'>
+               <li>Join Game</li>
+               </Link>
+           </button> 
+      </div>
       </div>
       <div className = "centre-content">
 <div className="slogan">
@@ -25,21 +32,25 @@ function Home() {
 
       </div>
       
+  
        <div className="start-btn">
            <button>
                <Link to='/setup'>
-               <li>Start Here</li>
+               <li>Create Game</li>
                </Link>
            </button> 
       </div>
-      </div>
-      <footer >
-        <button>Contact us</button>
-        <button>Faq</button>
-        <button>Terms and conditions</button>
 
-</footer>
-    
+ 
+
+      </div>
+     <div className="footer">
+        <nav>
+          <a href="home">Contact us</a>
+          <a href="home">Services</a>
+          <a href="home">Terms and conditions</a>
+        </nav>
+     </div>
           
        </div>
 

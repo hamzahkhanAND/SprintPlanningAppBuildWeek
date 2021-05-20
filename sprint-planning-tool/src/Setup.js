@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import firebase from "firebase/app";
 import "firebase/firestore";
-import {Link} from 'react-router-dom'
-import nextId from "react-id-generator";
+// import {Link} from 'react-router-dom'
+// import nextId from "react-id-generator";
 
 function getRandomID(min, max) {
     min = Math.ceil(min);

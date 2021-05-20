@@ -1,6 +1,7 @@
 import './App.css';
 import { Switch, BrowserRouter as Router, Route } from "react-router-dom";
 import Home from './Home'
+import PointsSelection from './PointsSelection'
 import Setup from './Setup'
 import DisplayName from './DisplayName'
 import JoinGame from './JoinGame';
