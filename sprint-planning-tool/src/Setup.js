@@ -10,7 +10,7 @@ function getRandomID(min, max) {
     return Math.floor(Math.random() * (max - min) + min);
 }
 
-function Setup() {
+function Setup(props) {
     const [gameName, setName] = useState("");
     const [loader, setLoader] = useState(false)
     const handleSubmit = (e) => {
@@ -28,8 +28,15 @@ function Setup() {
                         console.error("Error writing document: ", error);
 
                     })
+                    
 
         setName("");
+        props.history.push({
+            pathname: '/displayName',
+            state: {
+                value : randomGameID   // pass the extracted url params here
+                 } // your data array of objects
+          })
             
     }
     var randomGameID = getRandomID(10000, 99999);
@@ -48,20 +55,19 @@ function Setup() {
                         <option value="fibonacci">Fibonacci</option>
                     </select>
                 </label>
-                <input type="submit" value="Create Race"
-                //     onClick = {firebase.firestore().collection("games").doc(randomGameID.toString()).set({
-                //         name:'Game Blah'
-                //     })
-                //     .then((docRef) => {
-                //         console.log("Document successfully written!");
-                //     })
-                //     .catch((error) => {
-                //         console.error("Error writing document: ", error);
+                
+                    {/* <Link  to={{
+                         pathname: "/displayName",
+                         state: {
+                            value : randomGameID   // pass the extracted url params here
+                             }
+                        }}>
+                            <input type="submit" value="Create Race"/>
+                    </Link> */}
 
-                //     })
-                    
-                // }
-                />
+                <input type="submit" value="Create Race"/>
+                
+                
             </form>
         </div>
     )
