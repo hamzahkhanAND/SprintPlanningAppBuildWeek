@@ -1,6 +1,7 @@
 import './App.css';
 import { Switch, BrowserRouter as Router, Route } from "react-router-dom";
 import Home from './Home'
+import PointsSelection from './PointsSelection'
 import Setup from './Setup'
 import DisplayName from './DisplayName'
 import firebase from "firebase/app";
@@ -27,6 +28,8 @@ function App() {
           <Route path='/' exact component={Home}/>
           <Route path='/setup' component={Setup}/>
           <Route path='/displayName' component={DisplayName}/>
+          <Route path='/points' exact component={PointsSelection}/>
+
         </Switch>
       </div>
     </Router>

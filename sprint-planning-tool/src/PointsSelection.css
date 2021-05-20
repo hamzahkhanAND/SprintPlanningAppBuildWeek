@@ -1,0 +1,100 @@
+.left-side{
+    background-color: green;
+}
+.right-side{
+    background-color: red;
+    height:900px;
+    display: flex;
+    flex-direction: column;
+    align-items:center;
+    justify-content:center;
+    
+    
+}
+.story-btns{
+  
+    text-decoration: white;
+    text-align:center;
+    margin-top: 700px;
+    margin-left: 200px;
+  
+    
+   
+}
+
+.story-page-header {
+    width: 1%;
+    /* background: #9998fb; */
+    padding: 2rem;
+    display: flex;
+  }
+
+.add-stories-btn{
+    -moz-border-radius:4rem;
+    -webkit-border-radius:2rem;
+    border-radius:4rem;
+    background:#ec8434;
+    width: 300px;
+    height: 50px;
+
+    
+  }
+  .exit-race-btn{
+    -moz-border-radius:4rem;
+    -webkit-border-radius:2rem;
+    border-radius:4rem;
+    background:gray;
+    width: 300px;
+    height: 50px;
+
+    
+  }
+
+  .reveal-stories-btn{
+    -moz-border-radius:4rem;
+    -webkit-border-radius:2rem;
+    border-radius:4rem;
+    background:greenyellow;
+    width: 300px;
+    height: 50px;
+
+    
+  }
+
+  .card {
+    /* Add shadows to create the "card" effect */
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    transition: 0.3s;
+    background:yellow;
+    height: 200px;
+    text-align: center;
+    justify-content: center;
+    margin-top: 550px;
+
+
+  }
+  
+  /* On mouse-over, add a deeper shadow */
+  .card:hover {
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+  }
+  
+  /* Add some padding inside the card container */
+  .container {
+      display: flex;
+    justify-content: space-evenly;
+    padding: 20px;
+    height: 200px;
+    background:purple;
+  }
+
+  .story-input{
+      position: sticky;
+      /* margin:0 auto; */
+      background:yellow;
+  }
+
+
+
+
+  
