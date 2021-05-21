@@ -21,9 +21,6 @@ function PointsSelection(props) {
         firebase.firestore().collection("games").doc(randomGameID.toString()).collection("userStories").doc("1").set({
             userStory : userStory
         })
-
-
-
     }
     
     const handleSubmit = (e) => {
@@ -49,6 +46,28 @@ function PointsSelection(props) {
         setUserStory(doc.data().userStory);
         })
     }
+
+    const getResults = (e) => {
+        e.preventDefault();
+
+        // firebase.firestore().collection("games").doc(randomGameID.toString()).collection("userStories").doc("1").collection("estimate").get().then(doc => {
+        //     console.log(doc.data())
+        // })
+
+        firebase.firestore().collection("games").doc(randomGameID.toString()).collection("userStories").doc("1").collection("estimate")
+        .get()
+        .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                // doc.data() is never undefined for query doc snapshots
+                console.log(doc.id, " estimates ", doc.data().estimate);
+            });
+        })
+        .catch((error) => {
+            console.log("Error getting documents: ", error);
+        });
+    }
+
+
 
 
 
@@ -241,6 +260,9 @@ function PointsSelection(props) {
             {userStory}
         </div>
 
+        <form onSubmit = {getResults}>
+            <input type="submit" value="Reveal results" />
+        </form>
     </div>
   );
 }
