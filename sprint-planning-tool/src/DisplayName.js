@@ -24,12 +24,12 @@ function DisplayName(props) {
                     
 
         setUserName("");
-        // props.history.push({
-        //     pathname: '/displayName',
-        //     state: {
-        //         value : randomGameID   // pass the extracted url params here
-        //          } // your data array of objects
-        //   })
+        props.history.push({
+            pathname: '/points',
+            state: {
+                value : randomGameID   // pass the extracted url params here
+                 } // your data array of objects
+          })
             
     }
 
