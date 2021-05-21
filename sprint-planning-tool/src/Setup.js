@@ -71,7 +71,7 @@ function Setup(props) {
                             </label>
                         </div>
 
-                        <input type="submit" value="Create Race" className="cursor-pointer rounded-full bg-yellow-500 text-white text-2xl font-semibold py-3 w-full" />
+                        <input type="submit" value="Create Race" className="rounded-full bg-yellow-500 text-white text-2xl font-semibold py-3 w-full cursor-pointer" />
                     </form>
                 </div>
             </div>

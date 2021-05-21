@@ -11,7 +11,7 @@ function Home() {
      </div>
      <div className="join-btn">
            <button>
-               <Link to='/setup'>
+               <Link to='/joinGame'>
                <li>Join Game</li>
                </Link>
            </button> 
