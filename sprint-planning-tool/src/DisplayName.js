@@ -27,8 +27,9 @@ function DisplayName(props) {
         props.history.push({
             pathname: '/points',
             state: {
-                value : randomGameID   // pass the extracted url params here
-                 } // your data array of objects
+                value : randomGameID,
+                displayName : userName
+            }
           })
             
     }
