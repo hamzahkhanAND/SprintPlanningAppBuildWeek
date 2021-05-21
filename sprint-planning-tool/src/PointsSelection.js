@@ -1,139 +1,127 @@
 import React from 'react'
 import './PointsSelection.css';
-import {useState} from "react"
+import { useState } from "react"
+import Container from '@material-ui/core/Container'
+import TextareaAutosize from '@material-ui/core/TextareaAutosize'
+import TextField from '@material-ui/core/TextField';
+// import uuidv4 from 'uuidv4';
 
 function PointsSelection() {
-const[points, setPoints] = useState("");
-const[story, setStory] = useState("");
-const[stories, setStories] = useState([]);
+    const [selectedPoints, setSelectedPoints] = useState("")
+    
+    // const [inputFields, setInputFields] = useState([
+    //     { id: uuidv4(), Story: '', points: '' },
+    //   ]);
 
-console.log(points)
+    console.log(selectedPoints)
 
-const handleSubmit = (e)=>{
-    e.preventDefault();
-    const newStory={
-        id:new Date().getTime(),
-        text:story
-    }
-    setStories([...stories].concat(newStory))
-    setStory("")
-}
+
+
+    // const handleSubmit = (e) => {
+    //     e.preventDefault();
+    //     console.log("InputFields", inputFields);
+    //   };
     return (
 
-        <   div className="grid grid-cols-2">
-            <div className="left-side">
-                <div className="story-page-header">
+
+
+        <div className="wrapper">
+            <div className="left" >
+                <div className="points-selection-header">
                     <div className="logo">
-                        <img src="https://lh3.googleusercontent.com/proxy/Pszg-4b0KJ8njZgI-j1UK5p2hiXx0Y_gYDK1zO8_zabMRZ81fPSqfSYDI4yy-XbPLc4fTFfR2avHUllzsng7tZDQelwG9XxqYn4Eai8jdCV1Pk4bxUPRAmNdsfOC_yCoB_9AabTHI5WBkLHAcDELuw" />
+                        <img src="https://img.icons8.com/ios/452/running.png" />
                     </div>
                     <div className="join-btn">
-                        <button>
-                            <li>Join Game</li>
 
-                        </button>
+                    </div>
+                    <div className="display-name">
+
                     </div>
                 </div>
-
-                <div>
-                    board
-                        </div>
-                <div className="grid grid-cols-7">
-                <div onClick={() => setPoints(1)} class="card">
-                        <div class="container">
-                        <h1>9</h1>
-
-                        </div>
-                    </div>
-                    <div onClick={() => setPoints(3)} class="card">
-                        <div class="container">
-                        <h1>9</h1>
+                <h1> LEFT asdsansadjkjk asdjk sadjk jads jkasd jasd</h1>
+                <div className="container">
+                    <div className="grid">
+                        <div onClick={()=>{setSelectedPoints(1)}} className="card">
+                            <div className="card-text">
+                                <h1>1</h1>
+                            </div>
 
                         </div>
-                    </div>
-                    <div onClick={() => setPoints(5)} class="card">
-                        <div class="container">
-                         
-                        <h1>9</h1>
+                        <div onClick={()=>{setSelectedPoints(2)}} className="card">
+                            <div className="card-text">
+                                <h1>2</h1>
+                            </div>
 
                         </div>
-                    </div>
-
-
-
-                    <div onClick={() => setPoints(8)} class="card">
-                        <div class="container">
-                        <h1>9</h1>
+                        <div onClick={()=>{setSelectedPoints(3)}} className="card">
+                            <div className="card-text">
+                                <h1>3</h1>
+                            </div>
 
                         </div>
-                    </div>
-                    <div onClick={() => setPoints(13)} class="card">
-                        <div class="container">
-                        <h1>9</h1>
+                        <div onClick={()=>{setSelectedPoints(5)}} className="card">
+                            <div className="card-text">
+                                <h1>5</h1>
+                            </div>
 
                         </div>
-                    </div>
-                    <div onClick={() => setPoints(21)} class="card">
-                        <div class="container">
-                        <h1>9</h1>
+                        <div onClick={()=>{setSelectedPoints(8)}} className="card">
+                            <div className="card-text">
+                                <h1>8</h1>
+                            </div>
 
                         </div>
-                    </div>
-                    <div onClick={() => setPoints(0)} class="card">
-                        <div class="container">
-                            <h1>9</h1>
+                        <div onClick={()=>{setSelectedPoints(13)}} className="card">
+                            <div className="card-text">
+                                <h1>13</h1>
+                            </div>
+
+
                         </div>
+                        <div onClick={()=>{setSelectedPoints(21)}} className="card">
+                            <div className="card-text">
+                                <h1>21</h1>
+                            </div>
+
+                        </div>
+                        <div onClick={()=>{setSelectedPoints("P")}} className="card">
+                            <div className="card-text">
+                                <h1>P</h1>
+                            </div>
+
+                        </div>
+
                     </div>
                 </div>
             </div>
 
 
-            <div className="right-side">
-                <div className="story-input">
-                    <form onSubmit={handleSubmit}>
-                        <input type="text" onChange={(e)=>setStory(e.target.value)} value={story}/>
-                        <button type="submit">submit story</button>
+            <div className="right" >
+                <div className="text-area">
+                    <h1>Add new member</h1>
+                    <div className="story-field">
 
+                        <TextareaAutosize aria-label="minimum height" rowsMin={3} placeholder="Minimum 3 rows" />
+                    </div>
+                    <div className="points-field">
 
+                        <TextField
+                            id="filled-number"
+                            label="Number"
+                            type="number"
+
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                            variant="filled"
+                        />                </div>
+                    <form>
                     </form>
-                    {stories.map((data)=> <div key={story.id}>{data.text}</div>)}
-
-                </div>
-
-
-                <div className="story-btns">
-
-
-                    <div className="add-stories-btn">
-                        <button>
-                            <li>Add stories</li>
-
-                        </button>
-                    </div>
-                   
-                
-                </div>
-
-                <div className="grid grid-cols-2">
-                    <div>
-                    <div className="reveal-stories-btn">
-                        <button>
-                            <li>Reveal stories</li>
-
-                        </button>
-                    </div>
-                        </div>
-                    <div>
-                    <div className="exit-race-btn">
-                        <button>
-                            <li>Exit Race</li>
-
-                        </button>
-                    </div>
-                        </div>
                 </div>
             </div>
-        </div>
 
+
+        </div>
 
 
 

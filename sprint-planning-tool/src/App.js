@@ -30,6 +30,8 @@ function App() {
           <Route path='/setup' component={Setup}/>
           <Route path='/displayName' component={DisplayName}/>
           <Route path='/joinGame' component={JoinGame}/>
+          <Route path='/points' component={PointsSelection}/>
+
         </Switch>
       </div>
     </Router>
