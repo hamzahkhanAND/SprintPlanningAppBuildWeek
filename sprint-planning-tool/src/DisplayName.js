@@ -46,7 +46,7 @@ function DisplayName(props) {
                     onChange={(e) => setUserName(e.target.value)} />
                 </div>
                 <div className="my-9">
-                    <input type="submit" value="Let the race begin" className="rounded-full bg-yellow-500 text-white text-2xl font-semibold py-4 px-9 w-3/4" />
+                    <input type="submit" value="Let the race begin" className="rounded-full bg-yellow-500 text-white text-2xl font-semibold py-4 px-9 w-3/4 cursor-pointer" />
                 </div>
             </form>
         </div>
