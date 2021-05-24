@@ -5,17 +5,18 @@ import PointsSelection from './PointsSelection'
 import Setup from './Setup'
 import DisplayName from './DisplayName'
 import JoinGame from './JoinGame';
+import Results from './Results';
 import firebase from "firebase/app";
 import "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyA7EVtMCk59p7HU_iQmj6EJydWrhB9zwb4",
-  authDomain: "sprint-planning-tool-and.firebaseapp.com",
-  projectId: "sprint-planning-tool-and",
-  storageBucket: "sprint-planning-tool-and.appspot.com",
-  messagingSenderId: "1048128510912",
-  appId: "1:1048128510912:web:bc809f04c6482ea4d5c625",
-  measurementId: "G-228SL41M9E"
+  apiKey: "AIzaSyDK3iz_BsNKLE-EzkyhykZj1DU3eAcTxd8",
+  authDomain: "estimation-example-b5a04.firebaseapp.com",
+  projectId: "estimation-example-b5a04",
+  storageBucket: "estimation-example-b5a04.appspot.com",
+  messagingSenderId: "1058907231988",
+  appId: "1:1058907231988:web:8abddc0658c292431cf0a1",
+  measurementId: "G-EGBM9WLEEC"
 };
 
 // Initialize Firebase
@@ -31,7 +32,7 @@ function App() {
           <Route path='/displayName' component={DisplayName}/>
           <Route path='/joinGame' component={JoinGame}/>
           <Route path='/points' component={PointsSelection}/>
-
+          <Route path='/results' component={Results}/>
         </Switch>
       </div>
     </Router>

@@ -1,268 +1,324 @@
 import React from "react";
-// import './PointsSelection.css';
 import { useState, useEffect } from "react";
-import Container from "@material-ui/core/Container";
-import TextareaAutosize from "@material-ui/core/TextareaAutosize";
-import TextField from "@material-ui/core/TextField";
 import firebase from "firebase/app";
 import "firebase/firestore";
-// import uuidv4 from 'uuidv4';
+import "./PointsSelection.css";
 
 function PointsSelection(props) {
+  const gameID = props.location.state.gameID;
+  const username = props.location.state.username;
+  const [userStory, setUserStory] = useState("");
+  const [userStories, setUserStories] = useState([]);
+  const storyItems = userStories.map((story) => <p key={story}>{story}</p>);
+  const [estimate, setEstimate] = useState("");
+  const estimateID = new Date().getTime();
+  const [userEstimates, setUserEstimate] = useState([]);
+  const userVotedItems = userEstimates.map((estimate) => (
+    <span key={estimate[0]}>{estimate[0]}, </span>
+  ));
+  const [gameName, setGameName] = useState("");
+  const [disabled, setDisabled] = useState(true);
 
-    const randomGameID = props.location.state.value
-    const displayName = props.location.state.displayName
-    const [estimate, setEstimate] = useState("");
-    const [userStory, setUserStory] = useState("");
-
-    const handleStorySubmit = (e) => {
-        e.preventDefault();
-        
-        firebase.firestore().collection("games").doc(randomGameID.toString()).collection("userStories").doc("1").set({
-            userStory : userStory
-        })
-    }
-    
-    const handleSubmit = (e) => {
-        e.preventDefault();
-
-        firebase.firestore().collection("games").doc(randomGameID.toString()).collection("userStories").doc("1").collection("estimate").doc(displayName).set({
-                        estimate: estimate
-                    })
-                    .then((docRef) => {
-                        console.log("Document successfully written!");
-                    })
-                    .catch((error) => {
-                        console.error("Error writing document: ", error);
-
-                    })
-                    
-    }
-
-    const getStory = (e) => {
-        e.preventDefault();
-
-        firebase.firestore().collection("games").doc(randomGameID.toString()).collection("userStories").doc("1").get().then(doc => {
-        setUserStory(doc.data().userStory);
-        })
-    }
-
-    const getResults = (e) => {
-        e.preventDefault();
-
-        // firebase.firestore().collection("games").doc(randomGameID.toString()).collection("userStories").doc("1").collection("estimate").get().then(doc => {
-        //     console.log(doc.data())
-        // })
-
-        firebase.firestore().collection("games").doc(randomGameID.toString()).collection("userStories").doc("1").collection("estimate")
+  useEffect(() => {
+    function getGameName() {
+      firebase
+        .firestore()
+        .collection("games")
+        .doc(gameID.toString())
         .get()
-        .then((querySnapshot) => {
-            querySnapshot.forEach((doc) => {
-                // doc.data() is never undefined for query doc snapshots
-                console.log(doc.id, " estimates ", doc.data().estimate);
-            });
-        })
-        .catch((error) => {
-            console.log("Error getting documents: ", error);
+        .then((doc) => {
+          const data = doc.data().name;
+          setGameName(data);
         });
     }
 
+    function getStories() {
+      firebase
+        .firestore()
+        .collection("games")
+        .doc(gameID.toString())
+        .collection("userStories")
+        .onSnapshot((querySnapshot) => {
+          const stories = [];
+          querySnapshot.forEach((doc) => {
+            stories.push(doc.data().name);
+          });
+          setUserStories(stories);
+          if (stories.length > 0) {
+            setDisabled(false);
+          } else {
+            setDisabled(true);
+          }
+        });
+    }
 
+    function getUserEstimates() {
+      firebase
+        .firestore()
+        .collection("games")
+        .doc(gameID.toString())
+        .collection("userStories")
+        .doc("1")
+        .collection("estimates")
+        .onSnapshot((querySnapshot) => {
+          const estimates = [];
+          querySnapshot.forEach((doc) => {
+            estimates.push([doc.data().username, doc.data().points]);
+          });
+          setUserEstimate(estimates);
+        });
+    }  
 
+    getStories();
+    getUserEstimates();
+    getGameName();
+  }, []);
 
+  const handleResultsSubmit = (e) => {
+      e.preventDefault();
 
+      props.history.push({
+        pathname: "/results",
+        state: {
+          gameName: gameName,
+          userStories: userStories,
+          userEstimates: userEstimates
+        },
+      });
+  }
 
+  const handleUserStorySubmit = (e) => {
+    e.preventDefault();
 
+    firebase
+      .firestore()
+      .collection("games")
+      .doc(gameID.toString())
+      .collection("userStories")
+      .doc("1")
+      .set({
+        name: userStory,
+      })
+      .then(() => {
+        console.log("Document successfully written!");
+      })
+      .catch((error) => {
+        console.error("Error writing document: ", error);
+      });
 
-//   const [selectedPoints, setSelectedPoints] = useState("");
+    setUserStory("");
+  };
 
-  // const [inputFields, setInputFields] = useState([
-  //     { id: uuidv4(), Story: '', points: '' },
-  //   ]);
+  const handleSubmit = (e) => {
+    e.preventDefault();
 
-//   console.log("In main" + selectedPoints);
-//   const randomGameID = props.location.state.value;
-//   console.log(randomGameID);
+    firebase
+      .firestore()
+      .collection("games")
+      .doc(gameID.toString())
+      .collection("userStories")
+      .doc("1")
+      .collection("estimates")
+      .doc(estimateID.toString())
+      .set({
+        username: username,
+        points: estimate,
+      })
+      .then(() => {
+        console.log("Document successfully written!");
+      })
+      .catch((error) => {
+        console.error("Error writing document: ", error);
+      });
+  };
 
-  // const handleSubmit = (e) => {
-  //     e.preventDefault();
-  //     console.log("InputFields", inputFields);
-  //   };
-  // <div className="wrapper">
-  //     <div className="left" >
-  //         <div className="points-selection-header">
-  //             <div className="logo">
-  //                 <img src="https://img.icons8.com/ios/452/running.png" />
-  //             </div>
-  //             <div className="join-btn">
-  
-  //             </div>
-  //             <div className="display-name">
-  
-  //             </div>
-  //         </div>
-  //         <h1> LEFT asdsansadjkjk asdjk sadjk jads jkasd jasd</h1>
-  //         <div className="container">
-  //             <div className="grid">
-  //                 <div onClick={() => {
-      //                     setSelectedPoints(1)
-      //                     console.log("In On Click" + selectedPoints)
-      //                     firebase.firestore().collection("games/" + randomGameID + "/userStories").doc("UserStory").set({
-          //                         estimate: selectedPoints,
-          //                     })
-          //                         .then((docRef) => {
-              //                             console.log("Document successfully written!");
-              //                         })
-              //                         .catch((error) => {
-                  //                             console.error("Error writing document: ", error);
-                  
-                  //                         })
-                  //                 }} className="card">
-                  //                     <div className="card-text">
-                  //                         <h1>1</h1>
-                  //                     </div>
-                  
-                  //                 </div>
-                  //                 <div onClick={() => { setSelectedPoints(2) }} className="card">
-                  //                     <div className="card-text">
-                  //                         <h1>2</h1>
-                  //                     </div>
-                  
-                  //                 </div>
-                  //                 <div onClick={() => { setSelectedPoints(3) }} className="card">
-                  //                     <div className="card-text">
-                  //                         <h1>3</h1>
-                  //                     </div>
-                  
-                  //                 </div>
-                  //                 <div onClick={() => { setSelectedPoints(5) }} className="card">
-                  //                     <div className="card-text">
-                  //                         <h1>5</h1>
-                  //                     </div>
-                  
-                  //                 </div>
-                  //                 <div onClick={() => { setSelectedPoints(8) }} className="card">
-                  //                     <div className="card-text">
-                  //                         <h1>8</h1>
-                  //                     </div>
-                  
-                  //                 </div>
-                  //                 <div onClick={() => { setSelectedPoints(13) }} className="card">
-                  //                     <div className="card-text">
-                  //                         <h1>13</h1>
-                  //                     </div>
-                  
-                  //                 </div>
-                  //                 <div onClick={() => { setSelectedPoints(21) }} className="card">
-                  //                     <div className="card-text">
-                  //                         <h1>21</h1>
-                  //                     </div>
-                  
-                  //                 </div>
-                  //                 <div onClick={() => { setSelectedPoints("P") }} className="card">
-                  //                     <div className="card-text">
-                  //                         <h1>P</h1>
-                  //                     </div>
-                  
-                  //                 </div>
-                  
-                  //             </div>
-                  //         </div>
-                  //     </div>
-                  
-                  //     <div className="right" >
-                  //         <div className="text-area">
-                  //             <h1>Add new member</h1>
-                  //             <div className="story-field">
-                  
-                  //                 <TextareaAutosize aria-label="minimum height" rowsMin={3} placeholder="Minimum 3 rows" />
-                  //             </div>
-                  //             <div className="points-field">
-                  
-                  //                 <TextField
-                  //                     id="filled-number"
-                  //                     label="Number"
-                  //                     type="number"
-                  
-                  //                     InputLabelProps={{
-                      //                         shrink: true,
-                      //                     }}
-                      //                     variant="filled"
-                      //                 />                </div>
-                      //             <form>
-                      //             </form>
-                      //         </div>
-                      //     </div>
-                      
-                      // </div>
-                      
-    return (
+  return (
     <div className="container mx-auto">
-        <p>Game PIN : {randomGameID} </p>
-        <form onSubmit = {handleSubmit}>
-            <div className="radio">
-                <label>
-                    <input type="radio" value="1" name="estimate" onChange={(e) => setEstimate(e.target.value)}  />
-                    1
-                </label>
-            </div>
-            <div className="radio">
-                <label>
-                    <input type="radio" value="2" name="estimate" onChange={(e) => setEstimate(e.target.value)} />
-                    2
-                </label>
-            </div>
-            <div className="radio">
-                <label>
-                    <input type="radio" value="3" name="estimate" onChange={(e) => setEstimate(e.target.value)} />
-                    3
-                </label>
-            </div>
-            <div className="radio">
-                <label>
-                    <input type="radio" value="5" name="estimate" onChange={(e) => setEstimate(e.target.value)} />
-                    5
-                </label>
-            </div>
-            <div className="radio">
-                <label>
-                    <input type="radio" value="8" name="estimate" onChange={(e) => setEstimate(e.target.value)} />
-                    8
-                </label>
-            </div>
-            <div className="radio">
-                <label>
-                    <input type="radio" value="13" name="estimate" onChange={(e) => setEstimate(e.target.value)} />
-                    13
-                </label>
-            </div>
-            <div className="radio">
-                <label>
-                    <input type="radio" value="21" name="estimate" onChange={(e) => setEstimate(e.target.value)} />
-                    21
-                </label>
-            </div>
-            <input type="submit" value="Submit" name="estimate" />
-        </form>
+      <div className="grid grid-cols-1 md:grid-cols-3 items-center h-screen p-6">
+        <div className="col-span-2">
+          <div className="grid grid-cols-2">
+            <p className="text-left text-2xl font-semibold">{gameName}</p>
+            <p className="text-right text-2xl font-semibold">
+              Game PIN: {gameID}
+            </p>
+            <p className="text-left text-xl font-medium">{username}</p>
+          </div>
 
-        <form onSubmit = {handleStorySubmit}>
-            <label>Add user story</label>
-            <input type="text" name="userStory" placeholder="User story" value={userStory} onChange={(e) => setUserStory(e.target.value)} />
-            <input type="submit" value="Add" />
-        </form>
-
-
-        <form onSubmit = {getStory}>
-            <input type="submit" value="Show user story" />
-        </form>
-
-        <div>
-            {userStory}
+          <div className="text-center my-9 text-xl">
+            <p>Player Votes</p>
+            <div className="font-semibold">{userVotedItems}</div>
+          </div>
+          <form onSubmit={handleSubmit}>
+            <div className="grid grid-cols-4 lg:grid-cols-8 items-center my-16 gap-12">
+              <div>
+                <input
+                  className="hidden"
+                  id="radio_1"
+                  type="radio"
+                  value="1"
+                  name="estimate"
+                  onChange={(e) => setEstimate(e.target.value)}
+                />
+                <label
+                  className="px-8 py-12 rounded-lg border-2 border-grey-400 cursor-pointer"
+                  for="radio_1"
+                >
+                  <span className="font-semibold text-3xl">1</span>
+                </label>
+              </div>
+              <div>
+                <input
+                  className="hidden"
+                  id="radio_2"
+                  type="radio"
+                  value="2"
+                  name="estimate"
+                  onChange={(e) => setEstimate(e.target.value)}
+                />
+                <label
+                  className="px-8 py-12 rounded-lg border-2 border-grey-400 cursor-pointer"
+                  for="radio_2"
+                >
+                  <span className="font-semibold text-3xl">2</span>
+                </label>
+              </div>
+              <div>
+                <input
+                  className="hidden"
+                  id="radio_3"
+                  type="radio"
+                  value="3"
+                  name="estimate"
+                  onChange={(e) => setEstimate(e.target.value)}
+                />
+                <label
+                  className="px-8 py-12 rounded-lg border-2 border-grey-400 cursor-pointer"
+                  for="radio_3"
+                >
+                  <span className="font-semibold text-3xl">3</span>
+                </label>
+              </div>
+              <div>
+                <input
+                  className="hidden"
+                  id="radio_5"
+                  type="radio"
+                  value="5"
+                  name="estimate"
+                  onChange={(e) => setEstimate(e.target.value)}
+                />
+                <label
+                  className="px-8 py-12 rounded-lg border-2 border-grey-400 cursor-pointer"
+                  for="radio_5"
+                >
+                  <span className="font-semibold text-3xl">5</span>
+                </label>
+              </div>
+              <div>
+                <input
+                  className="hidden"
+                  id="radio_8"
+                  type="radio"
+                  value="8"
+                  name="estimate"
+                  onChange={(e) => setEstimate(e.target.value)}
+                />
+                <label
+                  className="px-8 py-12 rounded-lg border-2 border-grey-400 cursor-pointer"
+                  for="radio_8"
+                >
+                  <span className="font-semibold text-3xl">8</span>
+                </label>
+              </div>
+              <div>
+                <input
+                  className="hidden"
+                  id="radio_13"
+                  type="radio"
+                  value="13"
+                  name="estimate"
+                  onChange={(e) => setEstimate(e.target.value)}
+                />
+                <label
+                  className="px-8 py-12 rounded-lg border-2 border-grey-400 cursor-pointer"
+                  for="radio_13"
+                >
+                  <span className="font-semibold text-3xl">13</span>
+                </label>
+              </div>
+              <div>
+                <input
+                  className="hidden"
+                  id="radio_21"
+                  type="radio"
+                  value="21"
+                  name="estimate"
+                  onChange={(e) => setEstimate(e.target.value)}
+                />
+                <label
+                  className="px-8 py-12 rounded-lg border-2 border-grey-400 cursor-pointer"
+                  for="radio_21"
+                >
+                  <span className="font-semibold text-3xl">21</span>
+                </label>
+              </div>
+              <div>
+                <input
+                  className="hidden"
+                  id="radio_pass"
+                  type="radio"
+                  value="?"
+                  name="estimate"
+                  onChange={(e) => setEstimate(e.target.value)}
+                />
+                <label
+                  className="px-8 py-12 rounded-lg border-2 border-grey-400 cursor-pointer"
+                  for="radio_pass"
+                >
+                  <span className="font-semibold text-3xl">?</span>
+                </label>
+              </div>
+            </div>
+            <div className="text-center mt-16">
+              <input
+                className="rounded-full bg-yellow-500 text-white text-xl font-semibold py-2 w-full cursor-pointer"
+                type="submit"
+                value="Add estimate"
+                name="estimate"
+                disabled={disabled}
+              />
+            </div>
+          </form>
         </div>
 
-        <form onSubmit = {getResults}>
-            <input type="submit" value="Reveal results" />
-        </form>
+        <div className="text-center my-9 text-xl font-semibold">
+          <div>
+            <span className="font-normal">Now voting:</span> {storyItems}
+          </div>
+
+          <div className="mt-36">
+            <form onSubmit={handleUserStorySubmit}>
+              <div>
+                <input
+                  className="rounded border w-3/4 p-2"
+                  type="text"
+                  name="userStory"
+                  placeholder="Enter user story"
+                  value={userStory}
+                  onChange={(e) => setUserStory(e.target.value)}
+                />
+              </div>
+              <div className="my-3">
+                <input className="rounded-full bg-yellow-500 text-white text-xl font-semibold py-2 w-3/4 cursor-pointer" type="submit" value="Add story" />
+              </div>
+            </form>
+          </div>
+
+          <div>
+            <input className="rounded-full bg-green-500 text-white text-xl font-semibold py-2 w-3/4 cursor-pointer" type="submit" value="Show results" onClick={handleResultsSubmit} />  
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
