@@ -29,10 +29,15 @@ function Results(props) {
                 {userVotedItems}
             </div>
 
-            <div>
+            <div className="grid grid-cols-2 gap-12">
+              <div>
                 <Link to="/">
                     <input className="rounded-full bg-yellow-500 text-white text-xl font-semibold py-3 px-6 w-full cursor-pointer" type="submit" value="Start new game" />  
                 </Link>
+              </div>
+              <div>
+                <input className="rounded-full bg-blue-700 text-white text-xl font-semibold py-3 px-6 w-full cursor-pointer" type="submit" value="Save to Jira" />
+              </div>
           </div>
         </div>
     </div>
