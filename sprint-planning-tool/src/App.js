@@ -8,6 +8,7 @@ import JoinGame from './JoinGame';
 import Results from './Results';
 import firebase from "firebase/app";
 import "firebase/firestore";
+import Logo from './images/logo.png';
 
 const firebaseConfig = {
   apiKey: "AIzaSyDK3iz_BsNKLE-EzkyhykZj1DU3eAcTxd8",
@@ -26,6 +27,7 @@ function App() {
   return (
     <Router>
       <div className="App">
+        <img src={Logo} alt="Sprint to the end" />
         <Switch>
           <Route path='/' exact component={Home}/>
           <Route path='/setup' component={Setup}/>
@@ -34,6 +36,7 @@ function App() {
           <Route path='/points' component={PointsSelection}/>
           <Route path='/results' component={Results}/>
         </Switch>
+        <p className="font-semibold text-xl">Powered by AND Digital</p>
       </div>
     </Router>
   )
