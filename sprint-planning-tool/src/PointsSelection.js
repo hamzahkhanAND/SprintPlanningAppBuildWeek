@@ -12,13 +12,18 @@ function PointsSelection(props) {
   const storyItems = userStories.map((story) => <p key={story}>{story}</p>);
   const [estimate, setEstimate] = useState("");
   const estimateID = new Date().getTime();
-  const [userEstimates, setUserEstimate] = useState([]);
+  const [userEstimates, setUserEstimates] = useState([]);
+  const [userStoryCount, setUserStoryCount] = useState(1);
+  const [currentStory, setCurrentStory] = useState("");
+  const [users, setUsers] = useState([]);
   const userVotedItems = userEstimates.map((estimate) => (
     <span key={estimate[0]}>{estimate[0]}, </span>
   ));
   const [gameName, setGameName] = useState("");
   const [disabled, setDisabled] = useState(true);
+  const [addStoryDisable, setAddStoryDisable] = useState(true);
 
+  // Function to get current gameID.
   useEffect(() => {
     function getGameName() {
       firebase
@@ -32,6 +37,7 @@ function PointsSelection(props) {
         });
     }
 
+    // Function to retrieve user story from Firebase.
     function getStories() {
       firebase
         .firestore()
@@ -49,44 +55,70 @@ function PointsSelection(props) {
           } else {
             setDisabled(true);
           }
+          setUserStoryCount(stories.length);
         });
     }
 
+    // Function to retrieve user estimates
     function getUserEstimates() {
       firebase
         .firestore()
         .collection("games")
         .doc(gameID.toString())
         .collection("userStories")
-        .doc("1")
+        .doc((userStoryCount - 1).toString())
         .collection("estimates")
         .onSnapshot((querySnapshot) => {
           const estimates = [];
           querySnapshot.forEach((doc) => {
             estimates.push([doc.data().username, doc.data().points]);
           });
-          setUserEstimate(estimates);
+          setUserEstimates(estimates);
+          if (users.length === estimates.length || userStoryCount === 0) {
+            setAddStoryDisable(false);
+          } else {
+            setAddStoryDisable(true);
+          }
         });
-    }  
+    }
+
+    //Function to retrieve number of users in game
+    function getUsers() {
+      firebase
+        .firestore()
+        .collection("games")
+        .doc(gameID.toString())
+        .collection("users")
+        .onSnapshot((querySnapshot) => {
+          const users = [];
+          querySnapshot.forEach((doc) => {
+            users.push(doc.data().username);
+          });
+          setUsers(users);
+        });
+    }
 
     getStories();
     getUserEstimates();
     getGameName();
-  }, []);
+    getUsers();
+  }, [gameID, userStoryCount, users.length]);
 
+  // Pushes params onto next page
   const handleResultsSubmit = (e) => {
-      e.preventDefault();
+    e.preventDefault();
 
-      props.history.push({
-        pathname: "/results",
-        state: {
-          gameName: gameName,
-          userStories: userStories,
-          userEstimates: userEstimates
-        },
-      });
-  }
+    props.history.push({
+      pathname: "/results",
+      state: {
+        gameName: gameName,
+        userStories: userStories,
+        userEstimates: userEstimates,
+      },
+    });
+  };
 
+  // Function that adds user story to Firebase
   const handleUserStorySubmit = (e) => {
     e.preventDefault();
 
@@ -95,7 +127,7 @@ function PointsSelection(props) {
       .collection("games")
       .doc(gameID.toString())
       .collection("userStories")
-      .doc("1")
+      .doc(userStoryCount.toString())
       .set({
         name: userStory,
       })
@@ -105,10 +137,16 @@ function PointsSelection(props) {
       .catch((error) => {
         console.error("Error writing document: ", error);
       });
-
+    setCurrentStory(userStory);
     setUserStory("");
+    // setUserStoryCount();
+    setUserEstimates([]);
+
+    console.log("This is userStoryCount " + userStoryCount);
+    console.log("Current Story: " + currentStory);
   };
 
+  // Function that adds estimate to story
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -117,7 +155,7 @@ function PointsSelection(props) {
       .collection("games")
       .doc(gameID.toString())
       .collection("userStories")
-      .doc("1")
+      .doc((userStoryCount - 1).toString())
       .collection("estimates")
       .doc(estimateID.toString())
       .set({
@@ -126,10 +164,12 @@ function PointsSelection(props) {
       })
       .then(() => {
         console.log("Document successfully written!");
+        console.log("This is voted items ");
       })
       .catch((error) => {
         console.error("Error writing document: ", error);
       });
+    console.log("This is user estimates length: " + userEstimates.length);
   };
 
   return (
@@ -137,11 +177,12 @@ function PointsSelection(props) {
       <div className="grid grid-cols-1 md:grid-cols-3 items-center h-screen p-6">
         <div className="col-span-2">
           <div className="grid grid-cols-2">
-            <p className="text-left text-2xl font-semibold">{gameName}</p>
-            <p className="text-right text-2xl font-semibold">
+            <p className="text-left text-5xl font-semibold">{gameName}</p>
+            <p className="text-right text-3xl font-semibold">
               Game PIN: {gameID}
             </p>
-            <p className="text-left text-xl font-medium">{username}</p>
+            <p className="text-2xl font-semibold">Voting on: {currentStory}</p>
+            <p className=" text-xl font-medium">{username}</p>
           </div>
 
           <div className="text-center my-9 text-xl">
@@ -309,13 +350,23 @@ function PointsSelection(props) {
                 />
               </div>
               <div className="my-3">
-                <input className="rounded-full bg-yellow-500 text-white text-xl font-semibold py-2 w-3/4 cursor-pointer" type="submit" value="Add story" />
+                <input
+                  className="rounded-full bg-yellow-500 text-white text-xl font-semibold py-2 w-3/4 cursor-pointer"
+                  type="submit"
+                  value="Add story"
+                  disabled={addStoryDisable}
+                />
               </div>
             </form>
           </div>
 
           <div>
-            <input className="rounded-full bg-green-500 text-white text-xl font-semibold py-2 w-3/4 cursor-pointer" type="submit" value="Show results" onClick={handleResultsSubmit} />  
+            <input
+              className="rounded-full bg-green-500 text-white text-xl font-semibold py-2 w-3/4 cursor-pointer"
+              type="submit"
+              value="Show results"
+              onClick={handleResultsSubmit}
+            />
           </div>
         </div>
       </div>
