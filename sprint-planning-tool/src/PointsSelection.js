@@ -16,7 +16,6 @@ function PointsSelection(props) {
   const [estimate, setEstimate] = useState("");
   const estimateID = new Date().getTime();
   const [userEstimates, setUserEstimates] = useState([]);
-  const [userStoryCount, setUserStoryCount] = useState(1);
   const [currentStory, setCurrentStory] = useState("");
   const [users, setUsers] = useState([]);
   const userVotedItems = userEstimates.map((estimate) => (
@@ -58,7 +57,6 @@ function PointsSelection(props) {
           } else {
             setDisabled(true);
           }
-          setUserStoryCount(stories.length);
         });
     }
 
@@ -69,7 +67,7 @@ function PointsSelection(props) {
         .collection("games")
         .doc(gameID.toString())
         .collection("userStories")
-        .doc((userStoryCount - 1).toString())
+        .doc(userStories.length.toString())
         .collection("estimates")
         .onSnapshot((querySnapshot) => {
           const estimates = [];
@@ -77,7 +75,7 @@ function PointsSelection(props) {
             estimates.push([doc.data().username, doc.data().points]);
           });
           setUserEstimates(estimates);
-          if (users.length === estimates.length || userStoryCount === 0) {
+          if (users.length === estimates.length || userStories.length === 0) {
             setAddStoryDisable(false);
           } else {
             setAddStoryDisable(true);
@@ -105,7 +103,7 @@ function PointsSelection(props) {
     getUserEstimates();
     getGameName();
     getUsers();
-  }, [gameID, userStoryCount, users.length]);
+  }, [gameID, userStories.length, users.length]);
 
   // Pushes params onto next page
   const handleResultsSubmit = (e) => {
@@ -134,7 +132,7 @@ function PointsSelection(props) {
         .collection("games")
         .doc(gameID.toString())
         .collection("userStories")
-        .doc(userStoryCount.toString())
+        .doc(userStories.length.toString())
         .set({
           name: userStory,
         })
@@ -149,7 +147,7 @@ function PointsSelection(props) {
       // setUserStoryCount();
       setUserEstimates([]);
 
-      console.log("This is userStoryCount " + userStoryCount);
+      console.log("This is userStoryCount " + userStories.length);
       console.log("Current Story: " + currentStory);
     }
   };
@@ -163,7 +161,7 @@ function PointsSelection(props) {
       .collection("games")
       .doc(gameID.toString())
       .collection("userStories")
-      .doc((userStoryCount - 1).toString())
+      .doc(userStories.length.toString())
       .collection("estimates")
       .doc(estimateID.toString())
       .set({
@@ -342,7 +340,7 @@ function PointsSelection(props) {
 
         <div className="text-center my-9 text-xl font-semibold">
           <div>
-            <span className="font-normal">Now voting:</span> {storyItems}
+            <span className="font-normal">User Stories</span> {storyItems}
           </div>
 
           <div className="mt-36">
