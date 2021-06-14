@@ -3,11 +3,14 @@ import { useState, useEffect } from "react";
 import firebase from "firebase/app";
 import "firebase/firestore";
 import "./PointsSelection.css";
+import ErrorMsg from "./ErrorMsg";
 
 function PointsSelection(props) {
   const gameID = props.location.state.gameID;
   const username = props.location.state.username;
   const [userStory, setUserStory] = useState("");
+  const [userStoryErr, setUserStoryErr] = useState(false);
+
   const [userStories, setUserStories] = useState([]);
   const storyItems = userStories.map((story) => <p key={story}>{story}</p>);
   const [estimate, setEstimate] = useState("");
@@ -120,30 +123,35 @@ function PointsSelection(props) {
 
   // Function that adds user story to Firebase
   const handleUserStorySubmit = (e) => {
-    e.preventDefault();
+    if (!userStory) {
+      setUserStoryErr(true);
+      e.preventDefault();
+    } else {
+      e.preventDefault();
 
-    firebase
-      .firestore()
-      .collection("games")
-      .doc(gameID.toString())
-      .collection("userStories")
-      .doc(userStoryCount.toString())
-      .set({
-        name: userStory,
-      })
-      .then(() => {
-        console.log("Document successfully written!");
-      })
-      .catch((error) => {
-        console.error("Error writing document: ", error);
-      });
-    setCurrentStory(userStory);
-    setUserStory("");
-    // setUserStoryCount();
-    setUserEstimates([]);
+      firebase
+        .firestore()
+        .collection("games")
+        .doc(gameID.toString())
+        .collection("userStories")
+        .doc(userStoryCount.toString())
+        .set({
+          name: userStory,
+        })
+        .then(() => {
+          console.log("Document successfully written!");
+        })
+        .catch((error) => {
+          console.error("Error writing document: ", error);
+        });
+      setCurrentStory(userStory);
+      setUserStory("");
+      // setUserStoryCount();
+      setUserEstimates([]);
 
-    console.log("This is userStoryCount " + userStoryCount);
-    console.log("Current Story: " + currentStory);
+      console.log("This is userStoryCount " + userStoryCount);
+      console.log("Current Story: " + currentStory);
+    }
   };
 
   // Function that adds estimate to story
@@ -341,14 +349,22 @@ function PointsSelection(props) {
             <form onSubmit={handleUserStorySubmit}>
               <div>
                 <input
-                  className="rounded border w-3/4 p-2"
+                  className="mb-4 rounded border w-3/4 p-2"
                   type="text"
                   name="userStory"
                   placeholder="Enter user story"
                   value={userStory}
-                  onChange={(e) => setUserStory(e.target.value)}
+                  onChange={(e) =>
+                    setUserStory(e.target.value.replace(/[^\w\s]/gi, ""))
+                  }
                 />
               </div>
+              {userStoryErr && (
+                <ErrorMsg
+                  message={{ name: "Please enter a valid user story" }}
+                />
+              )}
+
               <div className="my-3">
                 <input
                   className="rounded-full bg-yellow-500 text-white text-xl font-semibold py-2 w-3/4 cursor-pointer"
