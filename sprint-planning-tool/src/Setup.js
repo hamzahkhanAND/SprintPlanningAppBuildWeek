@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import firebase from "firebase/app";
 import "firebase/firestore";
-
+import ErrorMsg from "./ErrorMsg";
 function getRandomID(min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
@@ -10,32 +10,37 @@ function getRandomID(min, max) {
 
 function Setup(props) {
   const [gameName, setName] = useState("");
+  const [gameNameErr, setGameNameErr] = useState(false);
 
   const handleSubmit = (e) => {
-    e.preventDefault();
+    if (!gameName) {
+      setGameNameErr(true);
+      e.preventDefault();
+    } else {
+      e.preventDefault();
 
-    firebase
-      .firestore()
-      .collection("games")
-      .doc(gameID.toString())
-      .set({
-        name: gameName,
-      })
-      .then(() => {
-        console.log("Document successfully written!");
-      })
-      .catch((error) => {
-        console.error("Error writing document: ", error);
+      firebase
+        .firestore()
+        .collection("games")
+        .doc(gameID.toString())
+        .set({
+          name: gameName,
+        })
+        .then(() => {
+          console.log("Document successfully written!");
+        })
+        .catch((error) => {
+          console.error("Error writing document: ", error);
+        });
+
+      props.history.push({
+        pathname: "/displayName",
+        state: {
+          gameID: gameID,
+        },
       });
-
-    props.history.push({
-      pathname: "/displayName",
-      state: {
-        gameID: gameID,
-      },
-    });
+    }
   };
-
   var gameID = getRandomID(10000, 99999);
 
   return (
@@ -49,7 +54,7 @@ function Setup(props) {
 
         <div className="md:mb-80">
           <form onSubmit={handleSubmit}>
-            <div className="my-9">
+            <div className="mb-2 my-9">
               <label className="text-lg font-medium">
                 Name Your Race
                 <input
@@ -58,10 +63,15 @@ function Setup(props) {
                   name="gameName"
                   placeholder="Race name"
                   value={gameName}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={(e) =>
+                    setName(e.target.value.replace(/[^\w\s]/gi, ""))
+                  }
                 />
               </label>
             </div>
+            {gameNameErr && (
+              <ErrorMsg message={{ name: "Please enter a valid game name" }} />
+            )}
 
             <div className="my-9">
               <label className="text-lg font-medium">

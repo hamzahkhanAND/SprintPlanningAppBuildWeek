@@ -3,11 +3,14 @@ import { useState, useEffect } from "react";
 import firebase from "firebase/app";
 import "firebase/firestore";
 import "./PointsSelection.css";
+import ErrorMsg from "./ErrorMsg";
 
 function PointsSelection(props) {
   const gameID = props.location.state.gameID;
   const username = props.location.state.username;
   const [userStory, setUserStory] = useState("");
+  const [userStoryErr, setUserStoryErr] = useState(false);
+
   const [userStories, setUserStories] = useState([]);
   const storyItems = userStories.map((story) => <p key={story}>{story}</p>);
   const [estimate, setEstimate] = useState("");
@@ -67,7 +70,7 @@ function PointsSelection(props) {
           });
           setUserEstimate(estimates);
         });
-    }  
+    }
 
     getStories();
     getUserEstimates();
@@ -75,38 +78,43 @@ function PointsSelection(props) {
   }, []);
 
   const handleResultsSubmit = (e) => {
-      e.preventDefault();
-
-      props.history.push({
-        pathname: "/results",
-        state: {
-          gameName: gameName,
-          userStories: userStories,
-          userEstimates: userEstimates
-        },
-      });
-  }
-
-  const handleUserStorySubmit = (e) => {
     e.preventDefault();
 
-    firebase
-      .firestore()
-      .collection("games")
-      .doc(gameID.toString())
-      .collection("userStories")
-      .doc("1")
-      .set({
-        name: userStory,
-      })
-      .then(() => {
-        console.log("Document successfully written!");
-      })
-      .catch((error) => {
-        console.error("Error writing document: ", error);
-      });
+    props.history.push({
+      pathname: "/results",
+      state: {
+        gameName: gameName,
+        userStories: userStories,
+        userEstimates: userEstimates,
+      },
+    });
+  };
 
-    setUserStory("");
+  const handleUserStorySubmit = (e) => {
+    if (!userStory) {
+      setUserStoryErr(true);
+      e.preventDefault();
+    } else {
+      e.preventDefault();
+
+      firebase
+        .firestore()
+        .collection("games")
+        .doc(gameID.toString())
+        .collection("userStories")
+        .doc("1")
+        .set({
+          name: userStory,
+        })
+        .then(() => {
+          console.log("Document successfully written!");
+        })
+        .catch((error) => {
+          console.error("Error writing document: ", error);
+        });
+
+      setUserStory("");
+    }
   };
 
   const handleSubmit = (e) => {
@@ -300,22 +308,39 @@ function PointsSelection(props) {
             <form onSubmit={handleUserStorySubmit}>
               <div>
                 <input
-                  className="rounded border w-3/4 p-2"
+                  className="mb-4 rounded border w-3/4 p-2"
                   type="text"
                   name="userStory"
                   placeholder="Enter user story"
                   value={userStory}
-                  onChange={(e) => setUserStory(e.target.value)}
+                  onChange={(e) =>
+                    setUserStory(e.target.value.replace(/[^\w\s]/gi, ""))
+                  }
                 />
               </div>
+              {userStoryErr && (
+                <ErrorMsg
+                  message={{ name: "Please enter a valid user story" }}
+                />
+              )}
+
               <div className="my-3">
-                <input className="rounded-full bg-yellow-500 text-white text-xl font-semibold py-2 w-3/4 cursor-pointer" type="submit" value="Add story" />
+                <input
+                  className="rounded-full bg-yellow-500 text-white text-xl font-semibold py-2 w-3/4 cursor-pointer"
+                  type="submit"
+                  value="Add story"
+                />
               </div>
             </form>
           </div>
 
           <div>
-            <input className="rounded-full bg-green-500 text-white text-xl font-semibold py-2 w-3/4 cursor-pointer" type="submit" value="Show results" onClick={handleResultsSubmit} />  
+            <input
+              className="rounded-full bg-green-500 text-white text-xl font-semibold py-2 w-3/4 cursor-pointer"
+              type="submit"
+              value="Show results"
+              onClick={handleResultsSubmit}
+            />
           </div>
         </div>
       </div>
