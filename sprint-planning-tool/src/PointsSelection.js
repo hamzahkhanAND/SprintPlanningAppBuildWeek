@@ -14,7 +14,7 @@ function PointsSelection(props) {
   const [userStories, setUserStories] = useState([]);
   const storyItems = userStories.map((story) => <p key={story}>{story}</p>);
   const [estimate, setEstimate] = useState("");
-  const estimateID = new Date().getTime();
+  const estimateID = username;
   const [userEstimates, setUserEstimates] = useState([]);
   const [currentStory, setCurrentStory] = useState("");
   const [users, setUsers] = useState([]);
@@ -132,7 +132,7 @@ function PointsSelection(props) {
         .collection("games")
         .doc(gameID.toString())
         .collection("userStories")
-        .doc(userStories.length.toString())
+        .doc((userStories.length + 1).toString())
         .set({
           name: userStory,
         })
@@ -163,7 +163,7 @@ function PointsSelection(props) {
       .collection("userStories")
       .doc(userStories.length.toString())
       .collection("estimates")
-      .doc(estimateID.toString())
+      .doc(estimateID)
       .set({
         username: username,
         points: estimate,
