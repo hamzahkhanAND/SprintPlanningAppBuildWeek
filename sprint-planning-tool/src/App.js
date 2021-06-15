@@ -36,7 +36,6 @@ function App() {
           <Route path="/points" component={PointsSelection} />
           <Route path="/results" component={Results} />
         </Switch>
-        <p className="font-semibold text-xl">Powered by AND Digital</p>
       </div>
     </Router>
   );
