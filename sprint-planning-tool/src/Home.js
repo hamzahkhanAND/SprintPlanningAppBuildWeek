@@ -16,10 +16,10 @@ function Home() {
       <div className="centre-content">
         <div className="slogan">
           <div className="slogan-main">
-            <h1 class="text-9xl font-semibold  ...">Sprint to the end</h1>
+            <h1 className="text-9xl font-semibold  ...">Sprint to the end</h1>
           </div>
           <div className="slogan-small">
-            <h3 class="text-5xl font-normal color-#E5E7EB ...">
+            <h3 className="text-5xl font-normal color-#E5E7EB ...">
               Making sprint feel like a 100 meter dash
             </h3>
           </div>

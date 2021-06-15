@@ -16,7 +16,6 @@ function PointsSelection(props) {
   const [estimate, setEstimate] = useState("");
   const estimateID = new Date().getTime();
   const [userEstimates, setUserEstimates] = useState([]);
-  const [currentStory, setCurrentStory] = useState("");
   const [users, setUsers] = useState([]);
   const userVotedItems = userEstimates.map((estimate) => (
     <span key={estimate[0]}>{estimate[0]}, </span>
@@ -112,9 +111,8 @@ function PointsSelection(props) {
     props.history.push({
       pathname: "/results",
       state: {
-        gameName: gameName,
-        userStories: userStories,
-        userEstimates: userEstimates,
+        gameID: gameID,
+        numberOfStories: userStories.length,
       },
     });
   };
@@ -132,7 +130,7 @@ function PointsSelection(props) {
         .collection("games")
         .doc(gameID.toString())
         .collection("userStories")
-        .doc(userStories.length.toString())
+        .doc((userStories.length + 1).toString())
         .set({
           name: userStory,
         })
@@ -142,13 +140,8 @@ function PointsSelection(props) {
         .catch((error) => {
           console.error("Error writing document: ", error);
         });
-      setCurrentStory(userStory);
       setUserStory("");
-      // setUserStoryCount();
       setUserEstimates([]);
-
-      console.log("This is userStoryCount " + userStories.length);
-      console.log("Current Story: " + currentStory);
     }
   };
 
@@ -187,7 +180,9 @@ function PointsSelection(props) {
             <p className="text-right text-3xl font-semibold">
               Game PIN: {gameID}
             </p>
-            <p className="text-2xl font-semibold">Voting on: {currentStory}</p>
+            <p className="text-2xl font-semibold">
+              Voting on: {userStories[userStories.length - 1]}
+            </p>
             <p className=" text-xl font-medium">{username}</p>
           </div>
 
@@ -208,7 +203,7 @@ function PointsSelection(props) {
                 />
                 <label
                   className="px-8 py-12 rounded-lg border-2 border-grey-400 cursor-pointer"
-                  for="radio_1"
+                  htmlFor="radio_1"
                 >
                   <span className="font-semibold text-3xl">1</span>
                 </label>
@@ -224,7 +219,7 @@ function PointsSelection(props) {
                 />
                 <label
                   className="px-8 py-12 rounded-lg border-2 border-grey-400 cursor-pointer"
-                  for="radio_2"
+                  htmlFor="radio_2"
                 >
                   <span className="font-semibold text-3xl">2</span>
                 </label>
@@ -240,7 +235,7 @@ function PointsSelection(props) {
                 />
                 <label
                   className="px-8 py-12 rounded-lg border-2 border-grey-400 cursor-pointer"
-                  for="radio_3"
+                  htmlFor="radio_3"
                 >
                   <span className="font-semibold text-3xl">3</span>
                 </label>
@@ -256,7 +251,7 @@ function PointsSelection(props) {
                 />
                 <label
                   className="px-8 py-12 rounded-lg border-2 border-grey-400 cursor-pointer"
-                  for="radio_5"
+                  htmlFor="radio_5"
                 >
                   <span className="font-semibold text-3xl">5</span>
                 </label>
@@ -272,7 +267,7 @@ function PointsSelection(props) {
                 />
                 <label
                   className="px-8 py-12 rounded-lg border-2 border-grey-400 cursor-pointer"
-                  for="radio_8"
+                  htmlFor="radio_8"
                 >
                   <span className="font-semibold text-3xl">8</span>
                 </label>
@@ -288,7 +283,7 @@ function PointsSelection(props) {
                 />
                 <label
                   className="px-8 py-12 rounded-lg border-2 border-grey-400 cursor-pointer"
-                  for="radio_13"
+                  htmlFor="radio_13"
                 >
                   <span className="font-semibold text-3xl">13</span>
                 </label>
@@ -304,7 +299,7 @@ function PointsSelection(props) {
                 />
                 <label
                   className="px-8 py-12 rounded-lg border-2 border-grey-400 cursor-pointer"
-                  for="radio_21"
+                  htmlFor="radio_21"
                 >
                   <span className="font-semibold text-3xl">21</span>
                 </label>
@@ -320,7 +315,7 @@ function PointsSelection(props) {
                 />
                 <label
                   className="px-8 py-12 rounded-lg border-2 border-grey-400 cursor-pointer"
-                  for="radio_pass"
+                  htmlFor="radio_pass"
                 >
                   <span className="font-semibold text-3xl">?</span>
                 </label>
