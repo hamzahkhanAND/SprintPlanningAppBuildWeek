@@ -11,14 +11,14 @@ function Home() {
               Sprint To the end
             </h1>
           </div>
-          <div className="mt-4 container w-96 h-auto ">
-            <h2 className="text-2xl md:text-normal  break-words">
+          <div className="mt-4 container w-80 sm:w-96 h-auto ">
+            <h2 className="sm:text-2xl text-normal">
               Making sprint planning feel like a 100m Dash
             </h2>
           </div>
         </div>
-        <div className="  ml-auto mr-auto ">
-          <button className="create-game-btn flex items-center py-20 px-20">
+        <div className="ml-auto mr-auto">
+          <button className="create-game-btn flex items-center py-16 px-16 sm:py-20 sm:px-20">
             <Link to="/setup">
               <h1>Create Game</h1>
             </Link>
