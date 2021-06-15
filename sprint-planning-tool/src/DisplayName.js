@@ -12,6 +12,7 @@ function DisplayName(props) {
 
   const handleSubmit = (e) => {
     if (!username) {
+      e.target.reset();
       setUserNameErr(true);
       e.preventDefault();
     } else {

@@ -3,42 +3,27 @@ import { Link } from "react-router-dom";
 import "./Home.css";
 function Home() {
   return (
-    <div className="Home">
-      <div className="Header">
-        <div className="join-btn">
-          <button>
-            <Link to="/joinGame">
-              <li>Join Game</li>
-            </Link>
-          </button>
-        </div>
-      </div>
-      <div className="centre-content">
-        <div className="slogan">
-          <div className="slogan-main">
-            <h1 class="text-9xl font-semibold  ...">Sprint to the end</h1>
+    <div className="container mx auto flex bg-yellow-200 h-screen w-screen sm:max-h-screen sm:max-w-screen">
+      <div className="bg-yellow-200 flex sm:flex-row sm:items-center sm:justify-center w-screen flex-col justify-center space-y-4">
+        <div className="w-auto h-auto flex flex-col items-center ml-16 w-8 sm:w-auto ">
+          <div className=" container w-96 h-auto ">
+            <h1 className=" text-4xl md:text-6xl font-bold break-words">
+              Sprint To the end
+            </h1>
           </div>
-          <div className="slogan-small">
-            <h3 class="text-5xl font-normal color-#E5E7EB ...">
-              Making sprint feel like a 100 meter dash
-            </h3>
+          <div className="mt-4 container w-96 h-auto ">
+            <h2 className="text-2xl md:text-normal  break-words">
+              Making sprint planning feel like a 100m Dash
+            </h2>
           </div>
         </div>
-
-        <div className="start-btn">
-          <button>
+        <div className="  ml-auto mr-auto ">
+          <button className="create-game-btn flex items-center py-20 px-20">
             <Link to="/setup">
-              <li>Create Game</li>
+              <h1>Create Game</h1>
             </Link>
           </button>
         </div>
-      </div>
-      <div className="footer">
-        <nav>
-          <a href="home">Contact us</a>
-          <a href="home">Services</a>
-          <a href="home">Terms and conditions</a>
-        </nav>
       </div>
     </div>
   );
