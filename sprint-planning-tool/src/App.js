@@ -28,7 +28,9 @@ function App() {
   return (
     <Router>
       <div className="App">
-        <img src={Logo} alt="Sprint to the end" />
+        <Link to="/">
+          <img src={Logo} alt="Sprint to the end" />
+        </Link>
 
         <Switch>
           <Route path="/" exact component={Home} />

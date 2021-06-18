@@ -7,6 +7,7 @@ function DisplayName(props) {
   const gameID = props.location.state.gameID;
   const [username, setUsername] = useState("");
   const [userNameErr, setUserNameErr] = useState(false);
+  const [characterCount, setCharacterCount] = useState(0);
   const [detectInvalidChar, setDetectInvalidChar] = useState(false);
 
   const userID = new Date().getTime();
@@ -54,24 +55,31 @@ function DisplayName(props) {
               Choose your display name
             </label>
           </div>
-          <div className="my-9 mb-3 flex flex-col items-center">
-            <input
-              type="text"
-              name="username"
-              placeholder="Display name"
-              maxLength="20"
-              required
-              className="rounded py-4 px-3 border w-3/4"
-              value={username}
-              onChange={(e) => {
-                console.log(e.target.value);
-                if (e.target.value.match(/[^A-Za-z-' ]/)) {
-                  setDetectInvalidChar(true);
-                }
-
-                setUsername(e.target.value.replace(/[^A-Za-z-' ]/g, ""));
-              }}
-            />
+          <div className="my-9 mb-3 flex flex-col">
+            <div className="grid grid-cols-10 items-center">
+              <div className="col-span-9">
+                <input
+                  type="text"
+                  name="username"
+                  placeholder="Display name"
+                  maxLength="20"
+                  required
+                  className="rounded py-4 px-3 border w-full"
+                  value={username}
+                  onChange={(e) => {
+                    console.log(e.target.value);
+                    if (e.target.value.match(/[^A-Za-z-' ]/)) {
+                      setDetectInvalidChar(true);
+                    }
+                    setUsername(e.target.value.replace(/[^A-Za-z-' ]/g, ""));
+                    setCharacterCount(e.target.value.length);
+                  }}
+                />
+              </div>
+              <div className="text-right">
+                <span>{characterCount}/20</span>
+              </div>
+            </div>
           </div>
 
           {detectInvalidChar && (
@@ -86,7 +94,7 @@ function DisplayName(props) {
             <input
               type="submit"
               value="Let the race begin"
-              className="rounded-lg bg-yellow-500 text-white text-2xl font-semibold py-4 px-9 w-3/4 cursor-pointer hover:bg-yellow-400"
+              className="rounded-lg bg-yellow-500 text-white text-2xl font-semibold py-4 px-9 w-full cursor-pointer hover:bg-yellow-400"
             />
           </div>
         </form>

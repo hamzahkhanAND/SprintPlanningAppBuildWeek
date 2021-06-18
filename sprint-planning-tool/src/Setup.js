@@ -11,7 +11,7 @@ function getRandomID(min, max) {
 function Setup(props) {
   const [gameName, setName] = useState("");
   const [gameNameErr, setGameNameErr] = useState(false);
-  const [characterCount, setCharacterCount] = useState(50);
+  const [characterCount, setCharacterCount] = useState(0);
   const [detectInvalidChar, setDetectInvalidChar] = useState(false);
 
   const handleSubmit = (e) => {
@@ -56,9 +56,11 @@ function Setup(props) {
 
         <div className="md:mb-80">
           <form onSubmit={handleSubmit}>
-            <div className="mb-2 my-9 ">
-              <label className="text-lg font-medium">
-                Name Your Race
+            <div className="my-9 grid grid-cols-5 items-center">
+              <div>
+                <label className="text-lg font-medium">Name Your Race</label>
+              </div>
+              <div className="col-span-3">
                 <input
                   className="rounded border px-3 py-2 w-full"
                   type="text"
@@ -76,8 +78,8 @@ function Setup(props) {
                     setCharacterCount(e.target.value.length);
                   }}
                 />
-              </label>
-              <div className=" w-1/2 ml-36">
+              </div>
+              <div className="text-right">
                 <span>{characterCount}/50</span>
               </div>
             </div>

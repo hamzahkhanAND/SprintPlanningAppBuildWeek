@@ -9,7 +9,7 @@ function PointsSelection(props) {
   const username = props.location.state.username;
   const [userStory, setUserStory] = useState("");
   const [userStoryErr, setUserStoryErr] = useState(false);
-  const [characterCount, setCharacterCount] = useState(50);
+  const [characterCount, setCharacterCount] = useState(0);
 
   const [userStories, setUserStories] = useState([]);
   const [estimate, setEstimate] = useState("");
@@ -430,22 +430,23 @@ function PointsSelection(props) {
           </div>
           <div>
             <form onSubmit={handleUserStorySubmit}>
-              <div className="mt-2">
-                <input
-                  className="rounded border p-4 w-full"
-                  type="text"
-                  name="userStory"
-                  placeholder="Enter a title for the user story"
-                  value={userStory}
-                  required
-                  maxLength="50"
-                  onChange={(e) => {
-                    setUserStory(e.target.value);
-
-                    setCharacterCount(e.target.value.length);
-                  }}
-                />
-                <div className=" ml-2 w-1/3 text-sm">
+              <div className="mt-2 grid grid-cols-5 items-center">
+                <div className="col-span-4">
+                  <input
+                    className="rounded border p-4 w-full"
+                    type="text"
+                    name="userStory"
+                    placeholder="Enter a title for the user story"
+                    value={userStory}
+                    required
+                    maxLength="50"
+                    onChange={(e) => {
+                      setUserStory(e.target.value);
+                      setCharacterCount(e.target.value.length);
+                    }}
+                  />
+                </div>
+                <div className="text-right">
                   <span>{characterCount}/50</span>
                 </div>
               </div>
