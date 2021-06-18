@@ -12,17 +12,14 @@ function PointsSelection(props) {
   const [userStoryErr, setUserStoryErr] = useState(false);
 
   const [userStories, setUserStories] = useState([]);
-  const storyItems = userStories.map((story) => <p key={story}>{story}</p>);
   const [estimate, setEstimate] = useState("");
-  const estimateID = username;
   const [userEstimates, setUserEstimates] = useState([]);
   const [users, setUsers] = useState([]);
-  const userVotedItems = userEstimates.map((estimate) => (
-    <span key={estimate[0]}>{estimate[0]}, </span>
-  ));
   const [gameName, setGameName] = useState("");
   const [disabled, setDisabled] = useState(true);
   const [addStoryDisable, setAddStoryDisable] = useState(true);
+  const [finalPointsDisabled, setFinalPointsDisabled] = useState(true);
+  const [finalStoryPoints, setFinalStoryPoints] = useState("");
 
   // Function to get current gameID.
   useEffect(() => {
@@ -48,7 +45,11 @@ function PointsSelection(props) {
         .onSnapshot((querySnapshot) => {
           const stories = [];
           querySnapshot.forEach((doc) => {
-            stories.push(doc.data().name);
+            stories.push([
+              doc.data().id,
+              doc.data().name,
+              doc.data().storyPoints,
+            ]);
           });
           setUserStories(stories);
           if (stories.length > 0) {
@@ -74,10 +75,15 @@ function PointsSelection(props) {
             estimates.push([doc.data().username, doc.data().points]);
           });
           setUserEstimates(estimates);
-          if (users.length === estimates.length || userStories.length === 0) {
+          if (
+            (users.length === estimates.length || userStories.length === 0) &&
+            users[0] === username
+          ) {
             setAddStoryDisable(false);
+            setFinalPointsDisabled(false);
           } else {
             setAddStoryDisable(true);
+            setFinalPointsDisabled(true);
           }
         });
     }
@@ -111,8 +117,8 @@ function PointsSelection(props) {
     props.history.push({
       pathname: "/results",
       state: {
-        gameID: gameID,
-        numberOfStories: userStories.length,
+        gameName: gameName,
+        userStories: userStories,
       },
     });
   };
@@ -133,6 +139,8 @@ function PointsSelection(props) {
         .doc((userStories.length + 1).toString())
         .set({
           name: userStory,
+          id: (userStories.length + 1).toString(),
+          storyPoints: "",
         })
         .then(() => {
           console.log("Document successfully written!");
@@ -146,7 +154,7 @@ function PointsSelection(props) {
   };
 
   // Function that adds estimate to story
-  const handleSubmit = (e) => {
+  const handleEstimateSubmit = (e) => {
     e.preventDefault();
 
     firebase
@@ -156,42 +164,82 @@ function PointsSelection(props) {
       .collection("userStories")
       .doc(userStories.length.toString())
       .collection("estimates")
-      .doc(estimateID)
+      .doc(username)
       .set({
         username: username,
         points: estimate,
       })
       .then(() => {
         console.log("Document successfully written!");
-        console.log("This is voted items ");
       })
       .catch((error) => {
         console.error("Error writing document: ", error);
       });
-    console.log("This is user estimates length: " + userEstimates.length);
+  };
+
+  const handleStoryPointSubmit = (storyID) => (event) => {
+    event.preventDefault();
+
+    firebase
+      .firestore()
+      .collection("games")
+      .doc(gameID.toString())
+      .collection("userStories")
+      .doc(storyID)
+      .update({
+        storyPoints: finalStoryPoints,
+      })
+      .then(() => {
+        console.log("Document successfully updated");
+      })
+      .catch((error) => {
+        console.error("Error updating document: ", error);
+      });
   };
 
   return (
     <div className="container mx-auto">
-      <div className="grid grid-cols-1 md:grid-cols-3 items-center h-screen p-6">
-        <div className="col-span-2">
-          <div className="grid grid-cols-2">
-            <p className="text-left text-5xl font-semibold">{gameName}</p>
-            <p className="text-right text-3xl font-semibold">
-              Game PIN: {gameID}
+      <div className="grid grid-cols-1 md:grid-cols-3 h-screen">
+        <div className="col-span-2 grid grid-cols-1 lg:grid-cols-2">
+          <div className="lg:text-left">
+            <p className="text-2xl font-semibold">{gameName}</p>
+            <p className="text-xl font-mdium">Players: {users.length}</p>
+            <p className="text-xl font-normal">
+              <span className="text-gray-400">Voting:</span>{" "}
+              {userStories.length > 0
+                ? userStories[userStories.length - 1][1]
+                : "No stories"}
             </p>
-            <p className="text-2xl font-semibold">
-              Voting on: {userStories[userStories.length - 1]}
-            </p>
-            <p className=" text-xl font-medium">{username}</p>
           </div>
-
-          <div className="text-center my-9 text-xl">
-            <p>Player Votes</p>
-            <div className="font-semibold">{userVotedItems}</div>
+          <div className="lg:text-right">
+            <p className="text-xl font-semibold">Game PIN: {gameID}</p>
+            <p className="text-xl font-medium">{username}</p>
           </div>
-          <form onSubmit={handleSubmit}>
-            <div className="grid grid-cols-4 lg:grid-cols-8 items-center my-16 gap-12">
+          <div className="col-span-2 text-xl font-semibold text-center">
+            {userEstimates.length > 0 ? "Votes" : "No Votes"}
+          </div>
+          <div className="grid grid-cols-5 col-span-2 text-center gap-20 mb-80">
+            {userEstimates.map((estimate) =>
+              users.length === userEstimates.length ? (
+                <div key={estimate[0]}>
+                  <label className="border-solid border-2 rounded-lg border-yellow-500 text-yellow-500 px-6 py-8">
+                    <span className="text-lg font-bold">{estimate[1]}</span>
+                  </label>
+                  <div className="text-lg font-medium mt-8">{estimate[0]}</div>
+                </div>
+              ) : (
+                <div key={estimate[0]}>
+                  <label className="border-solid border-2 rounded-lg border-yellow-500 px-6 py-8 bg-yellow-500"></label>
+                  <div className="text-lg font-medium mt-8">{estimate[0]}</div>
+                </div>
+              )
+            )}
+          </div>
+          <div className="col-span-2 text-center text-lg -mt-64">
+            Choose your card
+          </div>
+          <form onSubmit={handleEstimateSubmit} className="col-span-2">
+            <div className="grid grid-cols-8 text-center col-span-2 gap-20 -mt-56 mb-12">
               <div>
                 <input
                   className="hidden"
@@ -202,10 +250,10 @@ function PointsSelection(props) {
                   onChange={(e) => setEstimate(e.target.value)}
                 />
                 <label
-                  className="px-8 py-12 rounded-lg border-2 border-grey-400 cursor-pointer"
+                  className="border-solid border-2 rounded-lg border-yellow-500 py-8 px-6 cursor-pointer hover:bg-yellow-100"
                   htmlFor="radio_1"
                 >
-                  <span className="font-semibold text-3xl">1</span>
+                  <span className="font-bold text-lg">1</span>
                 </label>
               </div>
               <div>
@@ -218,10 +266,10 @@ function PointsSelection(props) {
                   onChange={(e) => setEstimate(e.target.value)}
                 />
                 <label
-                  className="px-8 py-12 rounded-lg border-2 border-grey-400 cursor-pointer"
+                  className="border-solid border-2 rounded-lg border-yellow-500 py-8 px-6 cursor-pointer hover:bg-yellow-100"
                   htmlFor="radio_2"
                 >
-                  <span className="font-semibold text-3xl">2</span>
+                  <span className="font-bold text-lg">2</span>
                 </label>
               </div>
               <div>
@@ -234,10 +282,10 @@ function PointsSelection(props) {
                   onChange={(e) => setEstimate(e.target.value)}
                 />
                 <label
-                  className="px-8 py-12 rounded-lg border-2 border-grey-400 cursor-pointer"
+                  className="border-solid border-2 rounded-lg border-yellow-500 py-8 px-6 cursor-pointer hover:bg-yellow-100"
                   htmlFor="radio_3"
                 >
-                  <span className="font-semibold text-3xl">3</span>
+                  <span className="font-bold text-lg">3</span>
                 </label>
               </div>
               <div>
@@ -250,10 +298,10 @@ function PointsSelection(props) {
                   onChange={(e) => setEstimate(e.target.value)}
                 />
                 <label
-                  className="px-8 py-12 rounded-lg border-2 border-grey-400 cursor-pointer"
+                  className="border-solid border-2 rounded-lg border-yellow-500 py-8 px-6 cursor-pointer hover:bg-yellow-100"
                   htmlFor="radio_5"
                 >
-                  <span className="font-semibold text-3xl">5</span>
+                  <span className="font-bold text-lg">5</span>
                 </label>
               </div>
               <div>
@@ -266,10 +314,10 @@ function PointsSelection(props) {
                   onChange={(e) => setEstimate(e.target.value)}
                 />
                 <label
-                  className="px-8 py-12 rounded-lg border-2 border-grey-400 cursor-pointer"
+                  className="border-solid border-2 rounded-lg border-yellow-500 py-8 px-6 cursor-pointer hover:bg-yellow-100"
                   htmlFor="radio_8"
                 >
-                  <span className="font-semibold text-3xl">8</span>
+                  <span className="font-bold text-lg">8</span>
                 </label>
               </div>
               <div>
@@ -282,10 +330,10 @@ function PointsSelection(props) {
                   onChange={(e) => setEstimate(e.target.value)}
                 />
                 <label
-                  className="px-8 py-12 rounded-lg border-2 border-grey-400 cursor-pointer"
+                  className="border-solid border-2 rounded-lg border-yellow-500 py-8 px-6 cursor-pointer hover:bg-yellow-100"
                   htmlFor="radio_13"
                 >
-                  <span className="font-semibold text-3xl">13</span>
+                  <span className="font-bold text-lg">13</span>
                 </label>
               </div>
               <div>
@@ -298,84 +346,129 @@ function PointsSelection(props) {
                   onChange={(e) => setEstimate(e.target.value)}
                 />
                 <label
-                  className="px-8 py-12 rounded-lg border-2 border-grey-400 cursor-pointer"
+                  className="border-solid border-2 rounded-lg border-yellow-500 py-8 px-6 cursor-pointer hover:bg-yellow-100"
                   htmlFor="radio_21"
                 >
-                  <span className="font-semibold text-3xl">21</span>
+                  <span className="font-bold text-lg">21</span>
                 </label>
               </div>
               <div>
                 <input
                   className="hidden"
-                  id="radio_pass"
+                  id="radio_?"
                   type="radio"
                   value="?"
                   name="estimate"
                   onChange={(e) => setEstimate(e.target.value)}
                 />
                 <label
-                  className="px-8 py-12 rounded-lg border-2 border-grey-400 cursor-pointer"
-                  htmlFor="radio_pass"
+                  className="border-solid border-2 rounded-lg border-yellow-500 py-8 px-6 cursor-pointer hover:bg-yellow-100"
+                  htmlFor="radio_?"
                 >
-                  <span className="font-semibold text-3xl">?</span>
+                  <span className="font-bold text-lg">?</span>
                 </label>
               </div>
             </div>
-            <div className="text-center mt-16">
+            <div className="text-center">
               <input
-                className="rounded-full bg-yellow-500 text-white text-xl font-semibold py-2 w-full cursor-pointer"
+                className="rounded-lg bg-yellow-500 text-white hover:bg-yellow-400 text-lg font-semibold py-2 px-8 w-auto cursor-pointer"
                 type="submit"
-                value="Add estimate"
+                value="Vote"
                 name="estimate"
                 disabled={disabled}
               />
             </div>
           </form>
         </div>
-
-        <div className="text-center my-9 text-xl font-semibold">
-          <div>
-            <span className="font-normal">User Stories</span> {storyItems}
+        <div className="ml-20">
+          <p className="text-xl font-semibold mb-2">Stories</p>
+          <div className="overflow-auto h-3/5">
+            {userStories.map((story) => (
+              <div
+                className={`p-6 mb-6 mr-2 rounded-lg ${
+                  story === userStories[userStories.length - 1]
+                    ? "bg-yellow-200"
+                    : "bg-gray-100"
+                }`}
+              >
+                <div className="grid grid-cols-2">
+                  <div className="text-lg font-normal">{story[1]}</div>
+                  <div className="text-lg font-normal text-right">
+                    {story[2]}
+                  </div>
+                </div>
+                <form onSubmit={handleStoryPointSubmit(story[0])}>
+                  <span className="text-base font-normal mr-2">
+                    Select story points
+                  </span>
+                  <select
+                    className="p-2 rounded-lg appearance-none"
+                    onChange={(e) => setFinalStoryPoints(e.target.value)}
+                  >
+                    <option value=""></option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="5">5</option>
+                    <option value="8">8</option>
+                    <option value="13">13</option>
+                    <option value="21">21</option>
+                  </select>
+                  <input
+                    className={`py-2 px-4 ml-2 text-base font-semibold cursor-pointer rounded-lg ${
+                      story === userStories[userStories.length - 1]
+                        ? "bg-yellow-500 text-white hover:bg-yellow-400"
+                        : "bg-gray-300 text-black hover:bg-gray-200"
+                    }`}
+                    type="submit"
+                    value="Save"
+                    disabled={finalPointsDisabled}
+                  />
+                </form>
+              </div>
+            ))}
           </div>
-
-          <div className="mt-36">
+          <div>
             <form onSubmit={handleUserStorySubmit}>
-              <div>
+              <div className="mt-2">
                 <input
-                  className="mb-4 rounded border w-3/4 p-2"
+                  className="rounded border p-4 w-full"
                   type="text"
                   name="userStory"
-                  placeholder="Enter user story"
+                  placeholder="Enter a title for the user story"
                   value={userStory}
                   onChange={(e) =>
                     setUserStory(e.target.value.replace(/[^\w\s]/gi, ""))
                   }
+                  required
                 />
               </div>
-              {userStoryErr && (
-                <ErrorMsg
-                  message={{ name: "Please enter a valid user story" }}
-                />
-              )}
-
-              <div className="my-3">
+              <div className="text-center mt-4">
                 <input
-                  className="rounded-full bg-yellow-500 text-white text-xl font-semibold py-2 w-3/4 cursor-pointer"
+                  className="rounded-lg bg-yellow-500 text-white hover:bg-yellow-400 text-lg font-semibold py-2 w-full cursor-pointer"
                   type="submit"
-                  value="Add story"
+                  value="Save"
                   disabled={addStoryDisable}
                 />
               </div>
             </form>
           </div>
-
-          <div>
-            <input
-              className="rounded-full bg-green-500 text-white text-xl font-semibold py-2 w-3/4 cursor-pointer"
-              type="submit"
-              value="Show results"
-              onClick={handleResultsSubmit}
-            />
+          <div className="grid grid-cols-2 mt-2 gap-4">
+            <div className="text-center">
+              <input
+                className="rounded-lg border-2 border-yellow-500 bg-white text-yellow-500 hover:bg-yellow-100 text-lg font-semibold py-2 w-full cursor-pointer"
+                type="submit"
+                value="Results"
+                onClick={handleResultsSubmit}
+              />
+            </div>
+            <div className="text-center">
+              <input
+                className="rounded-lg border-2 border-yellow-500 bg-white text-yellow-500 hover:bg-yellow-100 text-lg font-semibold py-2 w-full cursor-pointer"
+                type="submit"
+                value="Exit game"
+              />
+            </div>
           </div>
         </div>
       </div>

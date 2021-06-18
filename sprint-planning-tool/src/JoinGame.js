@@ -37,7 +37,7 @@ function JoinGame(props) {
             <input
               type="submit"
               value="Join Game"
-              className="rounded-full bg-yellow-500 text-white text-2xl font-semibold py-4 px-9 w-3/4 cursor-pointer"
+              className="rounded-lg bg-yellow-500 text-white text-2xl font-semibold py-4 px-9 w-3/4 cursor-pointer hover:bg-yellow-400"
             />
           </div>
         </form>

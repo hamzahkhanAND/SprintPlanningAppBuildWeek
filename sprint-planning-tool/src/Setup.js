@@ -54,11 +54,13 @@ function Setup(props) {
 
         <div className="md:mb-80">
           <form onSubmit={handleSubmit}>
-            <div className="mb-2 my-9">
-              <label className="text-lg font-medium">
-                Name Your Race
+            <div className="mb-2 my-9 grid grid-cols-5 items-center">
+              <div>
+                <label className="text-lg font-medium">Name Your Race</label>
+              </div>
+              <div className="col-span-4">
                 <input
-                  className="rounded border px-3 py-2 ml-2 w-2/4 lg:w-3/4"
+                  className="rounded border px-3 py-2 w-full"
                   type="text"
                   name="gameName"
                   placeholder="Race name"
@@ -67,25 +69,27 @@ function Setup(props) {
                     setName(e.target.value.replace(/[^\w\s]/gi, ""))
                   }
                 />
-              </label>
+              </div>
             </div>
             {gameNameErr && (
               <ErrorMsg message={{ name: "Please enter a valid game name" }} />
             )}
 
-            <div className="my-9">
-              <label className="text-lg font-medium">
-                Voting System
-                <select className="rounded border px-3 py-2 ml-6 w-2/4 lg:w-3/4">
+            <div className="my-9 grid grid-cols-5 items-center">
+              <div>
+                <label className="text-lg font-medium">Voting System</label>
+              </div>
+              <div className="col-span-4">
+                <select className="rounded border px-3 py-2 w-full appearance-none">
                   <option value="fibonacci">Fibonacci</option>
                 </select>
-              </label>
+              </div>
             </div>
 
             <input
               type="submit"
               value="Create Race"
-              className="rounded-full bg-yellow-500 text-white text-2xl font-semibold py-3 w-full cursor-pointer"
+              className="rounded-lg bg-yellow-500 text-white text-2xl font-semibold py-3 w-full cursor-pointer hover:bg-yellow-400"
             />
           </form>
         </div>
