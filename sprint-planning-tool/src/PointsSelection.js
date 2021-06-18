@@ -10,6 +10,7 @@ function PointsSelection(props) {
   const username = props.location.state.username;
   const [userStory, setUserStory] = useState("");
   const [userStoryErr, setUserStoryErr] = useState(false);
+  const [characterCount, setCharacterCount] = useState(50);
 
   const [userStories, setUserStories] = useState([]);
   const storyItems = userStories.map((story) => <p key={story}>{story}</p>);
@@ -120,7 +121,7 @@ function PointsSelection(props) {
   // Function that adds user story to Firebase
   const handleUserStorySubmit = (e) => {
     if (!userStory) {
-      setUserStoryErr(true);
+      setTimeout(() => setUserStoryErr(true), 1000);
       e.preventDefault();
     } else {
       e.preventDefault();
@@ -340,17 +341,24 @@ function PointsSelection(props) {
 
           <div className="mt-36">
             <form onSubmit={handleUserStorySubmit}>
-              <div>
+              <div className=" ">
                 <input
-                  className="mb-4 rounded border w-3/4 p-2"
+                  className="mb-0 rounded border w-3/4 p-2"
                   type="text"
                   name="userStory"
                   placeholder="Enter user story"
                   value={userStory}
-                  onChange={(e) =>
-                    setUserStory(e.target.value.replace(/[^\w\s]/gi, ""))
-                  }
+                  required
+                  maxLength="50"
+                  onChange={(e) => {
+                    setUserStory(e.target.value);
+
+                    setCharacterCount(e.target.value.length);
+                  }}
                 />
+                <div className="  ml-2 w-1/3 text-sm">
+                  <span>{characterCount}/50</span>
+                </div>
               </div>
               {userStoryErr && (
                 <ErrorMsg

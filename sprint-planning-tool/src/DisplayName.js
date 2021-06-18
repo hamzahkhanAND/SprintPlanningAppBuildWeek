@@ -7,6 +7,7 @@ function DisplayName(props) {
   const gameID = props.location.state.gameID;
   const [username, setUsername] = useState("");
   const [userNameErr, setUserNameErr] = useState(false);
+  const [detectInvalidChar, setDetectInvalidChar] = useState(false);
 
   const userID = new Date().getTime();
 
@@ -53,21 +54,32 @@ function DisplayName(props) {
               Choose your display name
             </label>
           </div>
-          <div className="my-9 mb-3">
+          <div className="my-9 mb-3 flex flex-col items-center">
             <input
               type="text"
               name="username"
               placeholder="Display name"
+              maxLength="20"
+              required
               className="rounded py-4 px-3 border w-3/4"
               value={username}
-              onChange={(e) =>
-                setUsername(e.target.value.replace(/[^\w\s]/gi, ""))
-              }
+              onChange={(e) => {
+                console.log(e.target.value);
+                if (e.target.value.match(/[^A-Za-z-' ]/)) {
+                  setDetectInvalidChar(true);
+                }
+
+                setUsername(e.target.value.replace(/[^A-Za-z-' ]/g, ""));
+              }}
             />
           </div>
 
-          {userNameErr && (
-            <ErrorMsg message={{ name: "Please enter a valid name" }} />
+          {detectInvalidChar && (
+            <ErrorMsg
+              message={{
+                name: "Cannot enter any special characters outside of apostrophes ' and hyphens -",
+              }}
+            />
           )}
 
           <div className="my-9">

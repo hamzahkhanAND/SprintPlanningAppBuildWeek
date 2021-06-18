@@ -1,8 +1,21 @@
-.App {
-  /* max-width:3000px; */
-  /* width: 100vh;
-  max-width:1000px; */
+.join-game-btn{
+  width:70px;
+  height:30px;
+  border:none;
+  margin-top:10px;
+  color:black;
+  font-weight: 600;
+  background-color:#d6c832;
+  box-shadow: inset 0 0 0 0 grey;
+  transition:ease-in-out 0.8s;
+  font-size:13px;
+  outline:none;
+
+}
+
+.join-game-btn:hover{
+  box-shadow: inset 300px 0 0 black;
+  color:white;
 
 
-};
-
+}

@@ -11,6 +11,8 @@ function getRandomID(min, max) {
 function Setup(props) {
   const [gameName, setName] = useState("");
   const [gameNameErr, setGameNameErr] = useState(false);
+  const [characterCount, setCharacterCount] = useState(50);
+  const [detectInvalidChar, setDetectInvalidChar] = useState(false);
 
   const handleSubmit = (e) => {
     if (!gameName) {
@@ -54,7 +56,7 @@ function Setup(props) {
 
         <div className="md:mb-80">
           <form onSubmit={handleSubmit}>
-            <div className="mb-2 my-9">
+            <div className="mb-2 my-9 ">
               <label className="text-lg font-medium">
                 Name Your Race
                 <input
@@ -63,14 +65,28 @@ function Setup(props) {
                   name="gameName"
                   placeholder="Race name"
                   value={gameName}
-                  onChange={(e) =>
-                    setName(e.target.value.replace(/[^\w\s]/gi, ""))
-                  }
+                  maxLength="50"
+                  required
+                  onChange={(e) => {
+                    console.log(e.target.value);
+                    if (e.target.value.match(/[^A-Za-z-' ]/)) {
+                      setDetectInvalidChar(true);
+                    }
+                    setName(e.target.value.replace(/[^A-Za-z-' ]/g, ""));
+                    setCharacterCount(e.target.value.length);
+                  }}
                 />
               </label>
+              <div className=" w-1/2 ml-36">
+                <span>{characterCount}/50</span>
+              </div>
             </div>
-            {gameNameErr && (
-              <ErrorMsg message={{ name: "Please enter a valid game name" }} />
+            {detectInvalidChar && (
+              <ErrorMsg
+                message={{
+                  name: "Cannot enter any special characters outside of apostrophes ' and hyphens -",
+                }}
+              />
             )}
 
             <div className="my-9">

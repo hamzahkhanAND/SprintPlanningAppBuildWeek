@@ -1,7 +1,9 @@
 import React, { useState } from "react";
+import ErrorMsg from "./ErrorMsg";
 
 function JoinGame(props) {
   const [gameID, setGameID] = useState("");
+  const [detectInvalidChar, setDetectInvalidChar] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -23,16 +25,31 @@ function JoinGame(props) {
               Enter Game PIN
             </label>
           </div>
-          <div className="my-9">
+          <div className="my-9 mb-2">
             <input
               type="text"
               name="gameID"
               placeholder="Game PIN"
               className="rounded py-4 px-3 border w-3/4"
+              maxLength="5"
+              required
               value={gameID}
-              onChange={(e) => setGameID(e.target.value)}
+              onChange={(e) => {
+                if (e.target.value.match(/\D/)) {
+                  setDetectInvalidChar(true);
+                }
+
+                setGameID(e.target.value.replace(/\D/g, ""));
+              }}
             />
           </div>
+          {detectInvalidChar && (
+            <ErrorMsg
+              message={{
+                name: "Please enter numbers only",
+              }}
+            />
+          )}
           <div className="my-9">
             <input
               type="submit"
