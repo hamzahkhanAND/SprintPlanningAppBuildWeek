@@ -239,15 +239,15 @@ function PointsSelection(props) {
             Choose your card
           </div>
           <form onSubmit={handleEstimateSubmit} className="col-span-2">
-            <div className="grid grid-cols-8 text-center col-span-2 gap-20 -mt-56 mb-12">
+            <div className="grid grid-cols-8 text-center col-span-2 gap-20 -mt-64 mb-12">
               <div>
                 <input
-                  className="hidden"
                   id="radio_1"
                   type="radio"
                   value="1"
                   name="estimate"
                   onChange={(e) => setEstimate(e.target.value)}
+                  required
                 />
                 <label
                   className="border-solid border-2 rounded-lg border-yellow-500 py-8 px-6 cursor-pointer hover:bg-yellow-100"
@@ -258,7 +258,6 @@ function PointsSelection(props) {
               </div>
               <div>
                 <input
-                  className="hidden"
                   id="radio_2"
                   type="radio"
                   value="2"
@@ -274,7 +273,6 @@ function PointsSelection(props) {
               </div>
               <div>
                 <input
-                  className="hidden"
                   id="radio_3"
                   type="radio"
                   value="3"
@@ -290,7 +288,6 @@ function PointsSelection(props) {
               </div>
               <div>
                 <input
-                  className="hidden"
                   id="radio_5"
                   type="radio"
                   value="5"
@@ -306,7 +303,6 @@ function PointsSelection(props) {
               </div>
               <div>
                 <input
-                  className="hidden"
                   id="radio_8"
                   type="radio"
                   value="8"
@@ -322,7 +318,6 @@ function PointsSelection(props) {
               </div>
               <div>
                 <input
-                  className="hidden"
                   id="radio_13"
                   type="radio"
                   value="13"
@@ -338,7 +333,6 @@ function PointsSelection(props) {
               </div>
               <div>
                 <input
-                  className="hidden"
                   id="radio_21"
                   type="radio"
                   value="21"
@@ -354,7 +348,6 @@ function PointsSelection(props) {
               </div>
               <div>
                 <input
-                  className="hidden"
                   id="radio_?"
                   type="radio"
                   value="?"
