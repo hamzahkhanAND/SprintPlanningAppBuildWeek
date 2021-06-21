@@ -85,6 +85,12 @@ function PointsSelection(props) {
             setAddStoryDisable(true);
             setFinalPointsDisabled(true);
           }
+
+          if (users.length === estimates.length) {
+            setDisabled(true);
+          } else {
+            setDisabled(false);
+          }
         });
     }
 
