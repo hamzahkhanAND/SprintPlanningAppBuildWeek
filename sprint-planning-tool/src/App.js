@@ -9,7 +9,6 @@ import Results from "./Results";
 import firebase from "firebase/app";
 import "firebase/firestore";
 import Logo from "./images/logo.png";
-import { Link } from "react-router-dom";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDK3iz_BsNKLE-EzkyhykZj1DU3eAcTxd8",
@@ -28,9 +27,7 @@ function App() {
   return (
     <Router>
       <div className="App">
-        <Link to="/">
-          <img src={Logo} alt="Sprint to the end" />
-        </Link>
+        <img src={Logo} alt="Sprint to the end" />
 
         <Switch>
           <Route path="/" exact component={Home} />

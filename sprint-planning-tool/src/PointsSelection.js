@@ -52,11 +52,6 @@ function PointsSelection(props) {
             ]);
           });
           setUserStories(stories);
-          if (stories.length > 0) {
-            setDisabled(false);
-          } else {
-            setDisabled(true);
-          }
         });
     }
 
@@ -75,20 +70,13 @@ function PointsSelection(props) {
             estimates.push([doc.data().username, doc.data().points]);
           });
           setUserEstimates(estimates);
-          if (
-            (users.length === estimates.length || userStories.length === 0) &&
-            users[0] === username
-          ) {
+          if (users.length === estimates.length || userStories.length === 0) {
             setAddStoryDisable(false);
             setFinalPointsDisabled(false);
+            setDisabled(true);
           } else {
             setAddStoryDisable(true);
             setFinalPointsDisabled(true);
-          }
-
-          if (users.length === estimates.length) {
-            setDisabled(true);
-          } else {
             setDisabled(false);
           }
         });
@@ -200,6 +188,27 @@ function PointsSelection(props) {
       })
       .catch((error) => {
         console.error("Error updating document: ", error);
+      });
+  };
+
+  const handleExitGame = (e) => {
+    e.preventDefault();
+
+    firebase
+      .firestore()
+      .collection("games")
+      .doc(gameID.toString())
+      .collection("users")
+      .doc(username)
+      .delete()
+      .then(() => {
+        console.log("Document successfully deleted");
+        props.history.push({
+          pathname: "/",
+        });
+      })
+      .catch((error) => {
+        console.error("Error removing document: ", error);
       });
   };
 
@@ -473,6 +482,7 @@ function PointsSelection(props) {
                 className="rounded-lg border-2 border-yellow-500 bg-white text-yellow-500 hover:bg-yellow-100 text-lg font-semibold py-2 w-full cursor-pointer"
                 type="submit"
                 value="Exit game"
+                onClick={handleExitGame}
               />
             </div>
           </div>
