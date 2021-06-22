@@ -19,7 +19,6 @@ function PointsSelection(props) {
   const [disabled, setDisabled] = useState(true);
   const [addStoryDisable, setAddStoryDisable] = useState(true);
   const [finalPointsDisabled, setFinalPointsDisabled] = useState(true);
-  const [exitGameDisabled, setExitGameDisabled] = useState(true);
   const [finalStoryPoints, setFinalStoryPoints] = useState("");
 
   // Function to get current gameID.
@@ -53,6 +52,11 @@ function PointsSelection(props) {
             ]);
           });
           setUserStories(stories);
+          if (stories.length > 0) {
+            setDisabled(false);
+          } else {
+            setDisabled(true);
+          }
         });
     }
 
@@ -71,20 +75,21 @@ function PointsSelection(props) {
             estimates.push([doc.data().username, doc.data().points]);
           });
           setUserEstimates(estimates);
-          if (users.length === estimates.length || userStories.length === 0) {
+          if (
+            (users.length === estimates.length || userStories.length === 0) &&
+            users[0] === username
+          ) {
             setAddStoryDisable(false);
             setFinalPointsDisabled(false);
-            setDisabled(true);
           } else {
             setAddStoryDisable(true);
             setFinalPointsDisabled(true);
-            setDisabled(false);
           }
 
-          if (estimates.length === 0 || users.length !== estimates.length) {
-            setExitGameDisabled(true);
+          if (users.length === estimates.length) {
+            setDisabled(true);
           } else {
-            setExitGameDisabled(false);
+            setDisabled(false);
           }
         });
     }
@@ -150,7 +155,6 @@ function PointsSelection(props) {
           console.error("Error writing document: ", error);
         });
       setUserStory("");
-      setCharacterCount(0);
       setUserEstimates([]);
     }
   };
@@ -196,27 +200,6 @@ function PointsSelection(props) {
       })
       .catch((error) => {
         console.error("Error updating document: ", error);
-      });
-  };
-
-  const handleExitGame = (e) => {
-    e.preventDefault();
-
-    firebase
-      .firestore()
-      .collection("games")
-      .doc(gameID.toString())
-      .collection("users")
-      .doc(username)
-      .delete()
-      .then(() => {
-        console.log("Document successfully deleted");
-        props.history.push({
-          pathname: "/",
-        });
-      })
-      .catch((error) => {
-        console.error("Error removing document: ", error);
       });
   };
 
@@ -476,23 +459,13 @@ function PointsSelection(props) {
               </div>
             </form>
           </div>
-          <div className="grid grid-cols-2 mt-2 gap-4">
+          <div className="mt-2">
             <div className="text-center">
               <input
                 className="rounded-lg border-2 border-yellow-500 bg-white text-yellow-500 hover:bg-yellow-100 text-lg font-semibold py-2 w-full cursor-pointer"
                 type="submit"
                 value="Results"
-                disabled={exitGameDisabled}
                 onClick={handleResultsSubmit}
-              />
-            </div>
-            <div className="text-center">
-              <input
-                className="rounded-lg border-2 border-yellow-500 bg-white text-yellow-500 hover:bg-yellow-100 text-lg font-semibold py-2 w-full cursor-pointer"
-                type="submit"
-                value="Exit game"
-                disabled={exitGameDisabled}
-                onClick={handleExitGame}
               />
             </div>
           </div>

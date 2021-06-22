@@ -10,6 +10,8 @@ function DisplayName(props) {
   const [characterCount, setCharacterCount] = useState(0);
   const [detectInvalidChar, setDetectInvalidChar] = useState(false);
 
+  const userID = new Date().getTime();
+
   const handleSubmit = (e) => {
     if (!username) {
       e.target.reset();
@@ -23,7 +25,7 @@ function DisplayName(props) {
         .collection("games")
         .doc(gameID.toString())
         .collection("users")
-        .doc(username)
+        .doc(userID.toString())
         .set({
           username: username,
         })
