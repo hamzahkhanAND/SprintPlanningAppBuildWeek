@@ -19,6 +19,7 @@ function PointsSelection(props) {
   const [disabled, setDisabled] = useState(true);
   const [addStoryDisable, setAddStoryDisable] = useState(true);
   const [finalPointsDisabled, setFinalPointsDisabled] = useState(true);
+  const [exitGameDisabled, setExitGameDisabled] = useState(true);
   const [finalStoryPoints, setFinalStoryPoints] = useState("");
 
   // Function to get current gameID.
@@ -78,6 +79,12 @@ function PointsSelection(props) {
             setAddStoryDisable(true);
             setFinalPointsDisabled(true);
             setDisabled(false);
+          }
+
+          if (estimates.length === 0 || users.length !== estimates.length) {
+            setExitGameDisabled(true);
+          } else {
+            setExitGameDisabled(false);
           }
         });
     }
@@ -143,6 +150,7 @@ function PointsSelection(props) {
           console.error("Error writing document: ", error);
         });
       setUserStory("");
+      setCharacterCount(0);
       setUserEstimates([]);
     }
   };
@@ -474,6 +482,7 @@ function PointsSelection(props) {
                 className="rounded-lg border-2 border-yellow-500 bg-white text-yellow-500 hover:bg-yellow-100 text-lg font-semibold py-2 w-full cursor-pointer"
                 type="submit"
                 value="Results"
+                disabled={exitGameDisabled}
                 onClick={handleResultsSubmit}
               />
             </div>
@@ -482,6 +491,7 @@ function PointsSelection(props) {
                 className="rounded-lg border-2 border-yellow-500 bg-white text-yellow-500 hover:bg-yellow-100 text-lg font-semibold py-2 w-full cursor-pointer"
                 type="submit"
                 value="Exit game"
+                disabled={exitGameDisabled}
                 onClick={handleExitGame}
               />
             </div>
