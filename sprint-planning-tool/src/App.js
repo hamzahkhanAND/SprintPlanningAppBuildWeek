@@ -11,13 +11,13 @@ import "firebase/firestore";
 import Logo from "./images/logo.png";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDK3iz_BsNKLE-EzkyhykZj1DU3eAcTxd8",
-  authDomain: "estimation-example-b5a04.firebaseapp.com",
-  projectId: "estimation-example-b5a04",
-  storageBucket: "estimation-example-b5a04.appspot.com",
-  messagingSenderId: "1058907231988",
-  appId: "1:1058907231988:web:8abddc0658c292431cf0a1",
-  measurementId: "G-EGBM9WLEEC",
+  apiKey: process.env.REACT_APP_API_KEY,
+  authDomain: process.env.REACT_APP_AUTH_DOMAIN,
+  projectId: process.env.REACT_APP_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_APP_ID,
+  measurementId: process.env.REACT_APP_MEASUREMENT_ID,
 };
 
 // Initialize Firebase

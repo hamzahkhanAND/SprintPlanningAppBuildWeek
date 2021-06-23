@@ -52,10 +52,10 @@ function PointsSelection(props) {
             ]);
           });
           setUserStories(stories);
-          if (stories.length > 0) {
-            setDisabled(false);
-          } else {
+          if (stories.length === 0) {
             setDisabled(true);
+          } else {
+            setDisabled(false);
           }
         });
     }
@@ -86,7 +86,7 @@ function PointsSelection(props) {
             setFinalPointsDisabled(true);
           }
 
-          if (users.length === estimates.length) {
+          if (users.length === estimates.length || userStories.length === 0) {
             setDisabled(true);
           } else {
             setDisabled(false);

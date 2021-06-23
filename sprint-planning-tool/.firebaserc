@@ -1,0 +1,7 @@
+{
+  "projects": {
+    "default": "andplanningtool-dev",
+    "dev": "andplanningtool-dev",
+    "prod": "andplanningtool-prod"
+  }
+}

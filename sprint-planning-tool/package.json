@@ -22,7 +22,9 @@
     "start": "craco start",
     "build": "craco build",
     "test": "craco test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "build:dev": "env-cmd -f .env.development npm run build && firebase deploy -P dev",
+    "build:prod": "env-cmd -f .env.production npm run build && firebase deploy -P prod"
   },
   "eslintConfig": {
     "extends": [
@@ -44,6 +46,7 @@
   },
   "devDependencies": {
     "autoprefixer": "^9.8.6",
+    "env-cmd": "^10.1.0",
     "postcss": "^7.0.35",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.1.2"
   }
