@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import firebase from "firebase/app";
 import "firebase/firestore";
 import "./PointsSelection.css";
+import { FaTrashAlt } from "react-icons/fa";
 
 function PointsSelection(props) {
   const gameID = props.location.state.gameID;
@@ -548,6 +549,7 @@ function PointsSelection(props) {
                     disabled={finalPointsDisabled}
                   />
                 </form>
+                <FaTrashAlt size={16} />
               </div>
             ))}
           </div>
