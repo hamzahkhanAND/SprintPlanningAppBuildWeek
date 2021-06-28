@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import firebase from "firebase/app";
 import "firebase/firestore";
 import "./PointsSelection.css";
-import { FaTrashAlt } from "react-icons/fa";
+import { FaEdit } from "react-icons/fa";
 
 function PointsSelection(props) {
   const gameID = props.location.state.gameID;
@@ -193,6 +193,7 @@ function PointsSelection(props) {
   // Function that adds estimate to story
   const handleEstimateSubmit = (e) => {
     e.preventDefault();
+    console.log(userStories.length.toString());
 
     firebase
       .firestore()
@@ -301,23 +302,26 @@ function PointsSelection(props) {
                 showEditUsername === false ? "" : "hidden"
               }`}
             >
-              <div>
-                <span className="text-xl font-medium mr-2">{username}</span>
-                <input
-                  className="rounded-lg bg-yellow-500 text-white hover:bg-yellow-400 text-lg text-center font-semibold py-2 w-1/6 cursor-pointer"
-                  type="submit"
-                  value="Edit"
-                  onClick={toggleEditUsernameClick}
-                />
+              <div className="flex flex-row items-center justify-end">
+                <div>
+                  <span className="text-xl font-medium mr-2">{username}</span>
+                </div>
+                <div>
+                  <FaEdit
+                    size={18}
+                    onClick={toggleEditUsernameClick}
+                    className="cursor-pointer"
+                  />
+                </div>
               </div>
             </div>
             <div className={` ${showEditUsername === false ? "hidden" : ""} `}>
               <form onSubmit={handleEditUsernameSubmit}>
-                <div className="flex flex-row justify-end space-x-2">
+                <div className="flex flex-row justify-end space-x-2 items-center">
                   <div>
                     <input
                       value={username}
-                      className="rounded border p-3 w-full"
+                      className="rounded border px-2 py-1 w-full"
                       type="text"
                       name="username"
                       required
@@ -326,14 +330,14 @@ function PointsSelection(props) {
                   </div>
                   <div>
                     <input
-                      className="rounded-lg border-2 border-yellow-500 bg-yellow-500 text-white hover:bg-yellow-400 text-lg text-center font-semibold p-2 w-full cursor-pointer"
+                      className="rounded-lg border-2 border-yellow-500 bg-yellow-500 text-white hover:bg-yellow-400 text-lg text-center font-semibold px-2 w-full cursor-pointer"
                       type="submit"
                       value="Save"
                     />
                   </div>
                   <div>
                     <input
-                      className="rounded-lg border-2 border-yellow-500 bg-white text-yellow-500 hover:bg-yellow-100 text-lg font-semibold p-2 w-full cursor-pointer"
+                      className="rounded-lg border-2 border-yellow-500 bg-white text-yellow-500 hover:bg-yellow-100 text-lg font-semibold px-2 w-full cursor-pointer"
                       type="submit"
                       value="Cancel"
                       onClick={toggleEditUsernameClick}
@@ -549,7 +553,6 @@ function PointsSelection(props) {
                     disabled={finalPointsDisabled}
                   />
                 </form>
-                <FaTrashAlt size={16} />
               </div>
             ))}
           </div>
