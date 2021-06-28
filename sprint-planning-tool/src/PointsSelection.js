@@ -6,10 +6,13 @@ import "./PointsSelection.css";
 
 function PointsSelection(props) {
   const gameID = props.location.state.gameID;
-  const username = props.location.state.username;
+  const userID = props.location.state.userID;
+  const [username, setUsername] = useState("");
   const [userStory, setUserStory] = useState("");
   const [userStoryErr, setUserStoryErr] = useState(false);
   const [characterCount, setCharacterCount] = useState(0);
+
+  const [showEditUsername, setShowEditUsername] = useState(false);
 
   const [userStories, setUserStories] = useState([]);
   const [estimate, setEstimate] = useState("");
@@ -23,6 +26,20 @@ function PointsSelection(props) {
 
   // Function to get current gameID.
   useEffect(() => {
+    function getUsername() {
+      firebase
+        .firestore()
+        .collection("games")
+        .doc(gameID.toString())
+        .collection("users")
+        .doc(userID.toString())
+        .get()
+        .then((doc) => {
+          const data = doc.data().username;
+          setUsername(data);
+        });
+    }
+
     function getGameName() {
       firebase
         .firestore()
@@ -69,27 +86,38 @@ function PointsSelection(props) {
         .collection("userStories")
         .doc(userStories.length.toString())
         .collection("estimates")
+        .orderBy("points")
         .onSnapshot((querySnapshot) => {
           const estimates = [];
           querySnapshot.forEach((doc) => {
             estimates.push([doc.data().username, doc.data().points]);
           });
           setUserEstimates(estimates);
-          if (
-            (users.length === estimates.length || userStories.length === 0) &&
-            users[0] === username
-          ) {
-            setAddStoryDisable(false);
-            setFinalPointsDisabled(false);
-          } else {
-            setAddStoryDisable(true);
-            setFinalPointsDisabled(true);
-          }
+          // if (
+          //   (users.length === estimates.length || userStories.length === 0) &&
+          //   users[0] === username
+          // ) {
+          //   setAddStoryDisable(false);
+          //   setFinalPointsDisabled(false);
+          // } else {
+          //   setAddStoryDisable(true);
+          //   setFinalPointsDisabled(true);
+          // }
+
+          // if (users.length === estimates.length || userStories.length === 0) {
+          //   setDisabled(true);
+          // } else {
+          //   setDisabled(false);
+          // }
 
           if (users.length === estimates.length || userStories.length === 0) {
             setDisabled(true);
+            setAddStoryDisable(false);
+            setFinalPointsDisabled(false);
           } else {
             setDisabled(false);
+            setAddStoryDisable(true);
+            setFinalPointsDisabled(true);
           }
         });
     }
@@ -114,7 +142,8 @@ function PointsSelection(props) {
     getUserEstimates();
     getGameName();
     getUsers();
-  }, [gameID, userStories.length, users.length]);
+    getUsername();
+  }, [userID, gameID, userStories.length, users.length]);
 
   // Pushes params onto next page
   const handleResultsSubmit = (e) => {
@@ -155,6 +184,7 @@ function PointsSelection(props) {
           console.error("Error writing document: ", error);
         });
       setUserStory("");
+      setCharacterCount(0);
       setUserEstimates([]);
     }
   };
@@ -170,10 +200,10 @@ function PointsSelection(props) {
       .collection("userStories")
       .doc(userStories.length.toString())
       .collection("estimates")
-      .doc(username)
+      .doc(userID.toString())
       .set({
         username: username,
-        points: estimate,
+        points: Number(estimate),
       })
       .then(() => {
         console.log("Document successfully written!");
@@ -203,6 +233,52 @@ function PointsSelection(props) {
       });
   };
 
+  const toggleEditUsernameClick = () => {
+    setShowEditUsername((showEditUsername) => !showEditUsername);
+  };
+
+  const updateEditUsername = () => {
+    firebase
+      .firestore()
+      .collection("games")
+      .doc(gameID.toString())
+      .collection("userStories")
+      .doc(userStories.length.toString())
+      .collection("estimates")
+      .doc(userID.toString())
+      .update({
+        username,
+      })
+      .then(() => {
+        console.log("Document successfully updated");
+      })
+      .catch((error) => {
+        console.error("Error updating document: ", error);
+      });
+  };
+
+  const handleEditUsernameSubmit = (e) => {
+    e.preventDefault();
+
+    firebase
+      .firestore()
+      .collection("games")
+      .doc(gameID.toString())
+      .collection("users")
+      .doc(userID.toString())
+      .set({
+        username,
+      })
+      .then(() => {
+        console.log("Document successfully updated");
+        setShowEditUsername(false);
+        updateEditUsername();
+      })
+      .catch((error) => {
+        console.error("Error updating document: ", error);
+      });
+  };
+
   return (
     <div className="container mx-auto">
       <div className="grid grid-cols-1 md:grid-cols-3 h-screen">
@@ -219,7 +295,52 @@ function PointsSelection(props) {
           </div>
           <div className="lg:text-right">
             <p className="text-xl font-semibold">Game PIN: {gameID}</p>
-            <p className="text-xl font-medium">{username}</p>
+            <div
+              className={`items-center justify-end ${
+                showEditUsername === false ? "" : "hidden"
+              }`}
+            >
+              <div>
+                <span className="text-xl font-medium mr-2">{username}</span>
+                <input
+                  className="rounded-lg bg-yellow-500 text-white hover:bg-yellow-400 text-lg text-center font-semibold py-2 w-1/6 cursor-pointer"
+                  type="submit"
+                  value="Edit"
+                  onClick={toggleEditUsernameClick}
+                />
+              </div>
+            </div>
+            <div className={` ${showEditUsername === false ? "hidden" : ""} `}>
+              <form onSubmit={handleEditUsernameSubmit}>
+                <div className="flex flex-row justify-end space-x-2">
+                  <div>
+                    <input
+                      value={username}
+                      className="rounded border p-3 w-full"
+                      type="text"
+                      name="username"
+                      required
+                      onChange={(e) => setUsername(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <input
+                      className="rounded-lg border-2 border-yellow-500 bg-yellow-500 text-white hover:bg-yellow-400 text-lg text-center font-semibold p-2 w-full cursor-pointer"
+                      type="submit"
+                      value="Save"
+                    />
+                  </div>
+                  <div>
+                    <input
+                      className="rounded-lg border-2 border-yellow-500 bg-white text-yellow-500 hover:bg-yellow-100 text-lg font-semibold p-2 w-full cursor-pointer"
+                      type="submit"
+                      value="Cancel"
+                      onClick={toggleEditUsernameClick}
+                    />
+                  </div>
+                </div>
+              </form>
+            </div>
           </div>
           <div className="col-span-2 text-xl font-semibold text-center">
             {userEstimates.length > 0 ? "Votes" : "No Votes"}
@@ -229,7 +350,9 @@ function PointsSelection(props) {
               users.length === userEstimates.length ? (
                 <div key={estimate[0]}>
                   <label className="border-solid border-2 rounded-lg border-yellow-500 text-yellow-500 px-6 py-8">
-                    <span className="text-lg font-bold">{estimate[1]}</span>
+                    <span className="text-lg font-bold">
+                      {isNaN(estimate[1]) ? "?" : estimate[1]}
+                    </span>
                   </label>
                   <div className="text-lg font-medium mt-8">{estimate[0]}</div>
                 </div>
@@ -384,6 +507,7 @@ function PointsSelection(props) {
           <div className="overflow-auto h-3/5">
             {userStories.map((story) => (
               <div
+                key={story[1]}
                 className={`p-6 mb-6 mr-2 rounded-lg ${
                   story === userStories[userStories.length - 1]
                     ? "bg-yellow-200"

@@ -10,8 +10,6 @@ function DisplayName(props) {
   const [characterCount, setCharacterCount] = useState(0);
   const [detectInvalidChar, setDetectInvalidChar] = useState(false);
 
-  const userID = new Date().getTime();
-
   const handleSubmit = (e) => {
     if (!username) {
       e.target.reset();
@@ -25,24 +23,22 @@ function DisplayName(props) {
         .collection("games")
         .doc(gameID.toString())
         .collection("users")
-        .doc(userID.toString())
-        .set({
+        .add({
           username: username,
         })
-        .then(() => {
-          console.log("Document successfully written!");
+        .then((doc) => {
+          console.log("Document written with ID: ", doc.id);
+          props.history.push({
+            pathname: "/points",
+            state: {
+              gameID: gameID,
+              userID: doc.id,
+            },
+          });
         })
         .catch((error) => {
           console.error("Error writing document: ", error);
         });
-
-      props.history.push({
-        pathname: "/points",
-        state: {
-          gameID: gameID,
-          username: username,
-        },
-      });
     }
   };
 
@@ -67,7 +63,6 @@ function DisplayName(props) {
                   className="rounded py-4 px-3 border w-full"
                   value={username}
                   onChange={(e) => {
-                    console.log(e.target.value);
                     if (e.target.value.match(/[^A-Za-z-' ]/)) {
                       setDetectInvalidChar(true);
                     }

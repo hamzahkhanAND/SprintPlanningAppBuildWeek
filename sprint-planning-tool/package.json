@@ -23,8 +23,8 @@
     "build": "craco build",
     "test": "craco test",
     "eject": "react-scripts eject",
-    "build:dev": "env-cmd -f .env.development npm run build && firebase deploy -P dev",
-    "build:prod": "env-cmd -f .env.production npm run build && firebase deploy -P prod"
+    "build:dev": "env-cmd -f .env.development craco build && firebase deploy -P dev",
+    "build:prod": "env-cmd -f .env.production craco build && firebase deploy -P prod"
   },
   "eslintConfig": {
     "extends": [
