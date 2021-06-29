@@ -11,7 +11,7 @@ function Results(props) {
       <div className="flex flex-col items-center justify-center">
         <p className="text-center text-5xl font-semibold mb-12">{gameName}</p>
         <div className="text-center mb-12">
-          <table class="table-auto">
+          <table className="table-auto">
             <thead>
               <tr>
                 <th className="p-4 text-2xl font-semibold">Story</th>
@@ -20,7 +20,7 @@ function Results(props) {
             </thead>
             <tbody>
               {userStories.map((story) => (
-                <tr>
+                <tr key={story[1]}>
                   <td className="p-4">{story[1]}</td>
                   <td className="p-4">{story[2]}</td>
                 </tr>
@@ -34,8 +34,8 @@ function Results(props) {
         <Link to="/">
           <input
             className="rounded-lg bg-yellow-500 text-white text-xl font-semibold py-3 px-6 cursor-pointer hover:bg-yellow-400"
-            type="Submit"
-            value="Start New Game"
+            type="button"
+            defaultValue="Start New Game"
           />
         </Link>
       </div>

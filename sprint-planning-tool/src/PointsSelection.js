@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import firebase from "firebase/app";
 import "firebase/firestore";
 import "./PointsSelection.css";
-import { FaEdit } from "react-icons/fa";
+import { FaEdit, FaTrashAlt } from "react-icons/fa";
 
 function PointsSelection(props) {
   const gameID = props.location.state.gameID;
@@ -193,7 +193,6 @@ function PointsSelection(props) {
   // Function that adds estimate to story
   const handleEstimateSubmit = (e) => {
     e.preventDefault();
-    console.log(userStories.length.toString());
 
     firebase
       .firestore()
@@ -281,6 +280,24 @@ function PointsSelection(props) {
       });
   };
 
+  const handleDeleteStoryClick = (storyID) => {
+    firebase
+      .firestore()
+      .collection("games")
+      .doc(gameID.toString())
+      .collection("userStories")
+      .doc(storyID)
+      .delete()
+      .then(() => {
+        console.log("Document succesfully deleted");
+        const newStories = userStories.filter((story) => story[0] !== storyID);
+        setUserStories(newStories);
+      })
+      .catch((error) => {
+        console.error("Error deleting document: ", error);
+      });
+  };
+
   return (
     <div className="container mx-auto">
       <div className="grid grid-cols-1 md:grid-cols-3 h-screen">
@@ -338,7 +355,7 @@ function PointsSelection(props) {
                   <div>
                     <input
                       className="rounded-lg border-2 border-yellow-500 bg-white text-yellow-500 hover:bg-yellow-100 text-lg font-semibold px-2 w-full cursor-pointer"
-                      type="submit"
+                      type="button"
                       value="Cancel"
                       onClick={toggleEditUsernameClick}
                     />
@@ -553,6 +570,15 @@ function PointsSelection(props) {
                     disabled={finalPointsDisabled}
                   />
                 </form>
+                <div>
+                  <FaTrashAlt
+                    className={` cursor-pointer ${
+                      userEstimates.length === 0 ? "" : "hidden"
+                    } `}
+                    size={18}
+                    onClick={() => handleDeleteStoryClick(story[0])}
+                  />
+                </div>
               </div>
             ))}
           </div>
@@ -592,7 +618,7 @@ function PointsSelection(props) {
             <div className="text-center">
               <input
                 className="rounded-lg border-2 border-yellow-500 bg-white text-yellow-500 hover:bg-yellow-100 text-lg font-semibold py-2 w-full cursor-pointer"
-                type="submit"
+                type="button"
                 value="Results"
                 onClick={handleResultsSubmit}
               />
