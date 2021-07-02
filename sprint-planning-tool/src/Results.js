@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 function Results(props) {
   const gameName = props.location.state.gameName;
-  const userStories = props.location.state.userStories;
+  const stories = props.location.state.stories;
 
   return (
     <div className="container mx-auto">
@@ -19,10 +19,10 @@ function Results(props) {
               </tr>
             </thead>
             <tbody>
-              {userStories.map((story) => (
+              {stories.map((story) => (
                 <tr key={story[1]}>
-                  <td className="p-4">{story[1]}</td>
-                  <td className="p-4">{story[2]}</td>
+                  <td className="p-4">{story.name}</td>
+                  <td className="p-4">{story.points}</td>
                 </tr>
               ))}
             </tbody>

@@ -8,143 +8,81 @@ import { FaEdit, FaTrashAlt } from "react-icons/fa";
 function PointsSelection(props) {
   const gameID = props.location.state.gameID;
   const userID = props.location.state.userID;
+
+  const [gameName, setGameName] = useState("");
   const [username, setUsername] = useState("");
-  const [userStory, setUserStory] = useState("");
-  const [userStoryErr, setUserStoryErr] = useState(false);
+  const [showEditUsername, setShowEditUsername] = useState(false);
+  const [users, setUsers] = useState([]);
+  const [stories, setStories] = useState([]);
+  const [storyName, setStoryName] = useState("");
+  const [estimate, setEstimate] = useState("");
+  const [finalStoryPoints, setFinalStoryPoints] = useState("");
   const [characterCount, setCharacterCount] = useState(0);
 
-  const [showEditUsername, setShowEditUsername] = useState(false);
-
-  const [userStories, setUserStories] = useState([]);
-  const [estimate, setEstimate] = useState("");
-  const [userEstimates, setUserEstimates] = useState([]);
-  const [users, setUsers] = useState([]);
-  const [gameName, setGameName] = useState("");
-  const [disabled, setDisabled] = useState(true);
-  const [addStoryDisable, setAddStoryDisable] = useState(true);
-  const [finalPointsDisabled, setFinalPointsDisabled] = useState(true);
-  const [finalStoryPoints, setFinalStoryPoints] = useState("");
-
-  // Function to get current gameID.
+  // Get list of stories
   useEffect(() => {
-    function getUsername() {
-      firebase
-        .firestore()
-        .collection("games")
-        .doc(gameID.toString())
-        .collection("users")
-        .doc(userID.toString())
-        .get()
-        .then((doc) => {
-          const data = doc.data().username;
-          setUsername(data);
-        });
-    }
+    const unsubscribe = firebase
+      .firestore()
+      .collection("games")
+      .doc(gameID.toString())
+      .collection("userStories")
+      .orderBy("created")
+      .onSnapshot((snapshot) => {
+        const listStories = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setStories(listStories);
+      });
 
-    function getGameName() {
-      firebase
-        .firestore()
-        .collection("games")
-        .doc(gameID.toString())
-        .get()
-        .then((doc) => {
-          const data = doc.data().name;
-          setGameName(data);
-        });
-    }
+    return () => unsubscribe();
+  }, [gameID]);
 
-    // Function to retrieve user story from Firebase.
-    function getStories() {
-      firebase
-        .firestore()
-        .collection("games")
-        .doc(gameID.toString())
-        .collection("userStories")
-        .onSnapshot((querySnapshot) => {
-          const stories = [];
-          querySnapshot.forEach((doc) => {
-            stories.push([
-              doc.data().id,
-              doc.data().name,
-              doc.data().storyPoints,
-            ]);
-          });
-          setUserStories(stories);
-          if (stories.length === 0) {
-            setDisabled(true);
-          } else {
-            setDisabled(false);
-          }
-        });
-    }
+  // Get username
+  useEffect(() => {
+    firebase
+      .firestore()
+      .collection("games")
+      .doc(gameID.toString())
+      .collection("users")
+      .doc(userID.toString())
+      .get()
+      .then((doc) => {
+        const data = doc.data().username;
+        setUsername(data);
+      });
+  }, [gameID, userID]);
 
-    // Function to retrieve user estimates
-    function getUserEstimates() {
-      firebase
-        .firestore()
-        .collection("games")
-        .doc(gameID.toString())
-        .collection("userStories")
-        .doc(userStories.length.toString())
-        .collection("estimates")
-        .orderBy("points")
-        .onSnapshot((querySnapshot) => {
-          const estimates = [];
-          querySnapshot.forEach((doc) => {
-            estimates.push([doc.data().username, doc.data().points]);
-          });
-          setUserEstimates(estimates);
-          // if (
-          //   (users.length === estimates.length || userStories.length === 0) &&
-          //   users[0] === username
-          // ) {
-          //   setAddStoryDisable(false);
-          //   setFinalPointsDisabled(false);
-          // } else {
-          //   setAddStoryDisable(true);
-          //   setFinalPointsDisabled(true);
-          // }
+  // Get game name
+  useEffect(() => {
+    firebase
+      .firestore()
+      .collection("games")
+      .doc(gameID.toString())
+      .get()
+      .then((doc) => {
+        const data = doc.data().name;
+        setGameName(data);
+      });
+  }, [gameID]);
 
-          // if (users.length === estimates.length || userStories.length === 0) {
-          //   setDisabled(true);
-          // } else {
-          //   setDisabled(false);
-          // }
+  // Get list of users
+  useEffect(() => {
+    const unsubscribe = firebase
+      .firestore()
+      .collection("games")
+      .doc(gameID.toString())
+      .collection("users")
+      .onSnapshot((snapshot) => {
+        const listUsers = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setUsers(listUsers);
+      });
 
-          if (users.length === estimates.length || userStories.length === 0) {
-            setDisabled(true);
-            setAddStoryDisable(false);
-            setFinalPointsDisabled(false);
-          } else {
-            setDisabled(false);
-            setAddStoryDisable(true);
-            setFinalPointsDisabled(true);
-          }
-        });
-    }
-
-    //Function to retrieve number of users in game
-    function getUsers() {
-      firebase
-        .firestore()
-        .collection("games")
-        .doc(gameID.toString())
-        .collection("users")
-        .onSnapshot((querySnapshot) => {
-          const users = [];
-          querySnapshot.forEach((doc) => {
-            users.push(doc.data().username);
-          });
-          setUsers(users);
-        });
-    }
-
-    getStories();
-    getUserEstimates();
-    getGameName();
-    getUsers();
-    getUsername();
-  }, [userID, gameID, userStories.length, users.length]);
+    return () => unsubscribe();
+  }, [gameID]);
 
   // Pushes params onto next page
   const handleResultsSubmit = (e) => {
@@ -153,65 +91,49 @@ function PointsSelection(props) {
     props.history.push({
       pathname: "/results",
       state: {
-        gameName: gameName,
-        userStories: userStories,
+        gameName,
+        stories,
       },
     });
   };
 
-  // Function that adds user story to Firebase
-  const handleUserStorySubmit = (e) => {
-    if (!userStory) {
-      setTimeout(() => setUserStoryErr(true), 1000);
-      e.preventDefault();
-    } else {
-      e.preventDefault();
-
-      firebase
-        .firestore()
-        .collection("games")
-        .doc(gameID.toString())
-        .collection("userStories")
-        .doc((userStories.length + 1).toString())
-        .set({
-          name: userStory,
-          id: (userStories.length + 1).toString(),
-          storyPoints: "",
-        })
-        .then(() => {
-          console.log("Document successfully written!");
-        })
-        .catch((error) => {
-          console.error("Error writing document: ", error);
-        });
-      setUserStory("");
-      setCharacterCount(0);
-      setUserEstimates([]);
-    }
-  };
-
-  // Function that adds estimate to story
-  const handleEstimateSubmit = (e) => {
+  const handleStorySubmit = (e) => {
     e.preventDefault();
-
     firebase
       .firestore()
       .collection("games")
       .doc(gameID.toString())
       .collection("userStories")
-      .doc(userStories.length.toString())
-      .collection("estimates")
-      .doc(userID.toString())
-      .set({
-        username: username,
-        points: Number(estimate),
+      .add({
+        name: storyName,
+        points: "",
+        estimates: {},
+        created: firebase.firestore.Timestamp.now(),
       })
-      .then(() => {
-        console.log("Document successfully written!");
-      })
-      .catch((error) => {
-        console.error("Error writing document: ", error);
+      .then(() => setStoryName(""));
+  };
+
+  const handleEstimateSubmit = (e) => {
+    e.preventDefault();
+    firebase
+      .firestore()
+      .collection("games")
+      .doc(gameID.toString())
+      .collection("userStories")
+      .doc(stories[stories.length - 1].id)
+      .update({
+        [`estimates.${userID}`]: Number(estimate),
       });
+  };
+
+  const deleteStory = (id) => {
+    firebase
+      .firestore()
+      .collection("games")
+      .doc(gameID.toString())
+      .collection("userStories")
+      .doc(id)
+      .delete();
   };
 
   const handleStoryPointSubmit = (storyID) => (event) => {
@@ -224,38 +146,12 @@ function PointsSelection(props) {
       .collection("userStories")
       .doc(storyID)
       .update({
-        storyPoints: finalStoryPoints,
-      })
-      .then(() => {
-        console.log("Document successfully updated");
-      })
-      .catch((error) => {
-        console.error("Error updating document: ", error);
+        points: finalStoryPoints,
       });
   };
 
   const toggleEditUsernameClick = () => {
     setShowEditUsername((showEditUsername) => !showEditUsername);
-  };
-
-  const updateEditUsername = () => {
-    firebase
-      .firestore()
-      .collection("games")
-      .doc(gameID.toString())
-      .collection("userStories")
-      .doc(userStories.length.toString())
-      .collection("estimates")
-      .doc(userID.toString())
-      .update({
-        username,
-      })
-      .then(() => {
-        console.log("Document successfully updated");
-      })
-      .catch((error) => {
-        console.error("Error updating document: ", error);
-      });
   };
 
   const handleEditUsernameSubmit = (e) => {
@@ -267,35 +163,20 @@ function PointsSelection(props) {
       .doc(gameID.toString())
       .collection("users")
       .doc(userID.toString())
-      .set({
+      .update({
         username,
       })
-      .then(() => {
-        console.log("Document successfully updated");
-        setShowEditUsername(false);
-        updateEditUsername();
-      })
-      .catch((error) => {
-        console.error("Error updating document: ", error);
-      });
+      .then(() => setShowEditUsername((showEditUsername) => !showEditUsername));
   };
 
-  const handleDeleteStoryClick = (storyID) => {
-    firebase
-      .firestore()
-      .collection("games")
-      .doc(gameID.toString())
-      .collection("userStories")
-      .doc(storyID)
-      .delete()
-      .then(() => {
-        console.log("Document succesfully deleted");
-        const newStories = userStories.filter((story) => story[0] !== storyID);
-        setUserStories(newStories);
-      })
-      .catch((error) => {
-        console.error("Error deleting document: ", error);
-      });
+  const getUsername = (userID) => {
+    let username = "test";
+    users.forEach((user) => {
+      if (userID === user.id) {
+        username = user.username;
+      }
+    });
+    return username;
   };
 
   return (
@@ -307,8 +188,8 @@ function PointsSelection(props) {
             <p className="text-xl font-mdium">Players: {users.length}</p>
             <p className="text-xl font-normal">
               <span className="text-gray-400">Voting:</span>{" "}
-              {userStories.length > 0
-                ? userStories[userStories.length - 1][1]
+              {stories.length > 0
+                ? stories[stories.length - 1].name
                 : "No stories"}
             </p>
           </div>
@@ -365,25 +246,48 @@ function PointsSelection(props) {
             </div>
           </div>
           <div className="col-span-2 text-xl font-semibold text-center">
-            {userEstimates.length > 0 ? "Votes" : "No Votes"}
+            {stories.length > 0 &&
+            Object.keys(stories[stories.length - 1].estimates).length > 0
+              ? "Votes"
+              : "No Votes"}
           </div>
           <div className="grid grid-cols-5 col-span-2 text-center gap-20 mb-80">
-            {userEstimates.map((estimate) =>
-              users.length === userEstimates.length ? (
-                <div key={estimate[0]}>
-                  <label className="border-solid border-2 rounded-lg border-yellow-500 text-yellow-500 px-6 py-8">
-                    <span className="text-lg font-bold">
-                      {isNaN(estimate[1]) ? "?" : estimate[1]}
-                    </span>
-                  </label>
-                  <div className="text-lg font-medium mt-8">{estimate[0]}</div>
-                </div>
-              ) : (
-                <div key={estimate[0]}>
-                  <label className="border-solid border-2 rounded-lg border-yellow-500 px-6 py-8 bg-yellow-500"></label>
-                  <div className="text-lg font-medium mt-8">{estimate[0]}</div>
-                </div>
-              )
+            {stories.length > 0 ? (
+              Object.keys(stories[stories.length - 1].estimates)
+                .sort(function (a, b) {
+                  return (
+                    stories[stories.length - 1].estimates[a] -
+                    stories[stories.length - 1].estimates[b]
+                  );
+                })
+                .map((key) =>
+                  users.length ===
+                  Object.keys(stories[stories.length - 1].estimates).length ? (
+                    <div key={key}>
+                      <label className="border-solid border-2 rounded-lg border-yellow-500 text-yellow-500 px-6 py-8">
+                        <span className="text-lg font-bold">
+                          {isNaN(stories[stories.length - 1].estimates[key])
+                            ? "?"
+                            : stories[stories.length - 1].estimates[key]}
+                        </span>
+                      </label>
+                      <div className="text-lg font-medium mt-8">
+                        {getUsername(key)}
+                      </div>
+                    </div>
+                  ) : (
+                    <div key={key}>
+                      <label className="border-solid border-2 rounded-lg border-yellow-500 px-6 py-8 bg-yellow-500"></label>
+                      <div className="text-lg font-medium mt-8">
+                        {getUsername(key)}
+                      </div>
+                    </div>
+                  )
+                )
+            ) : (
+              <div className="col-span-5 text-xl font-semibold text-center">
+                Add a story
+              </div>
             )}
           </div>
           <div className="col-span-2 text-center text-lg -mt-64">
@@ -519,7 +423,12 @@ function PointsSelection(props) {
                 type="submit"
                 value="Vote"
                 name="estimate"
-                disabled={disabled}
+                disabled={
+                  stories.length > 0
+                    ? users.length ===
+                      Object.keys(stories[stories.length - 1].estimates).length
+                    : true
+                }
               />
             </div>
           </form>
@@ -527,22 +436,22 @@ function PointsSelection(props) {
         <div className="ml-20">
           <p className="text-xl font-semibold mb-2">Stories</p>
           <div className="overflow-auto h-3/5">
-            {userStories.map((story) => (
+            {stories.map((story) => (
               <div
-                key={story[1]}
+                key={story.id}
                 className={`p-6 mb-6 mr-2 rounded-lg ${
-                  story === userStories[userStories.length - 1]
+                  story === stories[stories.length - 1]
                     ? "bg-yellow-200"
                     : "bg-gray-100"
                 }`}
               >
                 <div className="grid grid-cols-2">
-                  <div className="text-lg font-normal">{story[1]}</div>
+                  <div className="text-lg font-normal">{story.name}</div>
                   <div className="text-lg font-normal text-right">
-                    {story[2]}
+                    {story.points}
                   </div>
                 </div>
-                <form onSubmit={handleStoryPointSubmit(story[0])}>
+                <form onSubmit={handleStoryPointSubmit(story.id)}>
                   <span className="text-base font-normal mr-2">
                     Select story points
                   </span>
@@ -561,41 +470,43 @@ function PointsSelection(props) {
                   </select>
                   <input
                     className={`py-2 px-4 ml-2 text-base font-semibold cursor-pointer rounded-lg ${
-                      story === userStories[userStories.length - 1]
+                      story === stories[stories.length - 1]
                         ? "bg-yellow-500 text-white hover:bg-yellow-400"
                         : "bg-gray-300 text-black hover:bg-gray-200"
                     }`}
                     type="submit"
                     value="Save"
-                    disabled={finalPointsDisabled}
+                    disabled={
+                      stories.length > 0
+                        ? users.length !==
+                          Object.keys(stories[stories.length - 1].estimates)
+                            .length
+                        : false
+                    }
                   />
                 </form>
-                <div>
-                  <FaTrashAlt
-                    className={` cursor-pointer ${
-                      userEstimates.length === 0 ? "" : "hidden"
-                    } `}
-                    size={18}
-                    onClick={() => handleDeleteStoryClick(story[0])}
-                  />
-                </div>
+                <FaTrashAlt
+                  onClick={() => deleteStory(story.id)}
+                  size={18}
+                  className="cursor-pointer"
+                />
               </div>
             ))}
           </div>
           <div>
-            <form onSubmit={handleUserStorySubmit}>
+            <form onSubmit={handleStorySubmit}>
               <div className="mt-2 grid grid-cols-5 items-center">
                 <div className="col-span-4">
                   <input
                     className="rounded border p-4 w-full"
                     type="text"
-                    name="userStory"
+                    name="story"
                     placeholder="Enter a title for the user story"
-                    value={userStory}
+                    value={storyName}
                     required
                     maxLength="50"
                     onChange={(e) => {
-                      setUserStory(e.target.value);
+                      setStoryName(e.target.value);
                       setCharacterCount(e.target.value.length);
                     }}
                   />
@@ -609,7 +520,13 @@ function PointsSelection(props) {
                   className="rounded-lg bg-yellow-500 text-white hover:bg-yellow-400 text-lg font-semibold py-2 w-full cursor-pointer"
                   type="submit"
                   value="Save"
-                  disabled={addStoryDisable}
+                  disabled={
+                    stories.length > 0
+                      ? users.length !==
+                        Object.keys(stories[stories.length - 1].estimates)
+                          .length
+                      : false
+                  }
                 />
               </div>
             </form>
